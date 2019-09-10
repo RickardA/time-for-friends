@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend for time-for-friends project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RickardA/time-for-friends.git"
+  },
+  "author": "Rickard Andersson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RickardA/time-for-friends/issues"
+  },
+  "homepage": "https://github.com/RickardA/time-for-friends#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.7.0"
+  }
+}
