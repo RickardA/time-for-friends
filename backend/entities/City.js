@@ -3,8 +3,7 @@ const { ObjectId } = require('mongoose').Types;
 const Schema = mongoose.Schema;
 
 let citySchema = new Schema({
-    _id: ObjectId,
-    name: String,
+    name: {type: String, required: true},
 });
 
 module.exports = db.model('City', citySchema);

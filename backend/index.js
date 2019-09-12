@@ -2,10 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongodb');
 
-const app = express();
-const dbName = 'time-for-friends';
-mongoose.connect(`mongodb://localhost:27017/${dbName}`, { useNewUrlParser: true, useUnifiedTopology: true });
-
 let consoleColors = {
     red: "\u001b[1;31m",
     green: "\u001b[1;32m",
@@ -16,6 +12,9 @@ let consoleColors = {
     white: "\u001b[1;37m",
 }
 
+const app = express();
+const dbName = 'time-for-friends';
+mongoose.connect(`mongodb://localhost:27017/${dbName}`, { useNewUrlParser: true, useUnifiedTopology: true });
 
 global.db = mongoose.connection;
 db.on('error', () => console.log(`${consoleColors.red}Could not connect to db${consoleColors.white}`));
@@ -29,7 +28,10 @@ function startWebServer() {
     app.listen(port, () => console.log(`${consoleColors.green}Listening on port: ${port}${consoleColors.white}`));
 }
 
-const Person = require('./entities/Person');
+require('./entities/Person');
+require('./entities/City');
+require('./entities/Country');
+require('./entities/Timezone');
 
 app.use(express.json());
 app.use(express.static('www'));
@@ -37,40 +39,47 @@ app.use(express.static('www'));
 app.post('/api/:entity', async (req, res) => {
     try {
         const Model = mongoose.model(req.params.entity);
-        let instance = await Model.create(req.body).catch((err) => {
-            res.json({ error: 'Something went wrong while saving' });
-        });
-        res.json(instance);
+        let instance = await Model.create(req.body);
+        res.status(201).json(instance);
     } catch (err) {
-        res.json(err);
+        res.status(500).json({ error: err });
+        console.log(`${consoleColors.red}Error in post: ${err}${consoleColors.white}`);
     }
 })
 
 app.get('/api/:entity', async (req, res) => {
     try {
+        req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
+        req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
         const Model = mongoose.model(req.params.entity);
-        let result = await Model.find().catch((err) => {
-            res.status(401);
-            res.json({ error: 'Something went wrong' });
-            return
-        });
-        res.json(Object.values(result));
+        const result = await Model.find(req.query.find, null, req.query.extras);
+        if (!result) {
+            res.status(401).json({ error: 'Nothing found' });
+            return;
+        } else {
+            res.status(200).json(Object.values(result));
+        }
     } catch (err) {
-        res.json(err);
+        res.status(500).json({ error: err });
+        console.log(`${consoleColors.red}Error in get: ${err}${consoleColors.white}`);
     }
 })
 
 app.get('/api/:entity/:id', async (req, res) => {
     try {
+        req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
+        req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
         const Model = mongoose.model(req.params.entity);
-        let result = await Model.find(ObjectId(req.params.id)).catch((err) => {
-            res.status(401);
-            res.json({ error: 'Does not exists' });
-            return
-        });
-        res.json(Object.values(result));
+        let result = await Model.findOne(ObjectId(req.params.id), null, req.query.extras);
+        if (!result) {
+            res.status(401).json({ error: 'Nothing found' });
+            return;
+        } else {
+            res.status(200).json(Object.values(result));
+        }
     } catch (err) {
-        res.json(err);
+        res.status(500).json({ error: err });
+        console.log(`${consoleColors.red}Error in get by id: ${err}${consoleColors.white}`);
     }
 })
 
