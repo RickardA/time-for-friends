@@ -24,11 +24,11 @@ db.once('open', () => {
 });
 
 function startWebServer() {
-    const port = 3000;
+    const port = 5000;
     app.listen(port, () => console.log(`${consoleColors.green}Listening on port: ${port}${consoleColors.white}`));
 
     let dataFactory = require('./dataFactory.js');
-    dataFactory.loadCountries();
+    dataFactory.loadTimeZones();
 }
 
 require('./entities/Person');
