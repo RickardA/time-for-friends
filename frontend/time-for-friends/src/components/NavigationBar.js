@@ -21,7 +21,7 @@ export default class NavigationBar extends Component {
   render() {
     return (
       <Navbar color="dark" light>
-          <NavbarBrand href="/" className="mr-auto text-white">Time For Friends</NavbarBrand>
+          <Link to="/" className="text-white" style={{textDecoration: 'none', fontSize: '20px'}}>Time For Friends</Link>
           <NavbarToggler onClick={this.toggleNavbar} className="mr-2 " style={{backgroundColor: 'white'}} />
           <Collapse isOpen={!this.state.collapsed} navbar>
             <Nav navbar>
