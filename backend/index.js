@@ -26,12 +26,16 @@ db.once('open', () => {
 function startWebServer() {
     const port = 3000;
     app.listen(port, () => console.log(`${consoleColors.green}Listening on port: ${port}${consoleColors.white}`));
+
+    let dataFactory = require('./dataFactory.js');
+    dataFactory.loadCountries();
 }
 
 require('./entities/Person');
 require('./entities/City');
 require('./entities/Country');
 require('./entities/Timezone');
+
 
 app.use(express.json());
 app.use(express.static('www'));
