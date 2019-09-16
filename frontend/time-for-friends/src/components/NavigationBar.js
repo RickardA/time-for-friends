@@ -29,7 +29,10 @@ export default class NavigationBar extends Component {
                 <Link to="/" className="text-white">Home</Link>
               </NavItem>
               <NavItem>
-                <Link to="/friends" className="text-white">Friends</Link>
+                <Link to="/addFriend" className="text-white">Add Friend</Link>
+              </NavItem>
+              <NavItem>
+                <Link to="/myFriends" className="text-white">My Friends</Link>
               </NavItem>
             </Nav>
           </Collapse>

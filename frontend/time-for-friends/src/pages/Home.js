@@ -23,7 +23,7 @@ export default class Home extends Component {
           <p className="lead" style={jumbotronTxt}>This is a simple website to keep track on your friends,but not in a creepy way.</p>
           <p  className="lead" style={jumbotronTxt}>It uses smart functions to keep track on the time at your friends location.</p>
           <p className="lead">
-            <Link to="/friends"><Button color="primary">Try it!</Button></Link>
+            <Link to="/addfriend"><Button color="primary">Try it!</Button></Link>
           </p>
         </Jumbotron>
       </div>
