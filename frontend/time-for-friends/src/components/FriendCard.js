@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Card,CardBody } from 'reactstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import Clock from '../components/Clock'
 
 
 export default class FriendCard extends Component {
@@ -16,6 +17,7 @@ export default class FriendCard extends Component {
                     <p><FontAwesomeIcon icon='city' /> {this.props.person.city ? this.props.person.city.name : ''}</p>
                     <p><FontAwesomeIcon icon='flag' /> {this.props.person.country ? this.props.person.country.name : ''}</p>
                     <p><FontAwesomeIcon icon='globe-europe' /> {this.props.person.timezone ? this.props.person.timezone.offset : ''}</p>
+                    <Clock timezone={this.props.person.timezone ? this.props.person.timezone.offset : ''} />
                 </CardBody>
             </Card>
         );

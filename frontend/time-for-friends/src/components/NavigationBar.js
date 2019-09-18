@@ -26,13 +26,13 @@ export default class NavigationBar extends Component {
           <Collapse isOpen={!this.state.collapsed} navbar>
             <Nav navbar>
               <NavItem>
-                <Link to="/" className="text-white">Home</Link>
+                <Link to="/" onClick={this.toggleNavbar} className="text-white">Home</Link>
               </NavItem>
               <NavItem>
-                <Link to="/addFriend" className="text-white">Add Friend</Link>
+                <Link to="/addFriend" onClick={this.toggleNavbar} className="text-white">Add Friend</Link>
               </NavItem>
               <NavItem>
-                <Link to="/myFriends" className="text-white">My Friends</Link>
+                <Link to="/myFriends" onClick={this.toggleNavbar} className="text-white">My Friends</Link>
               </NavItem>
             </Nav>
           </Collapse>

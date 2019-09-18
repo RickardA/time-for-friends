@@ -18,7 +18,7 @@ export default class AddFriend extends Component {
             email: '',
             city: '',
             country: '',
-            timeZone: {}
+            timeZone: ''
         },
         formError: {
             firstNameError: false,

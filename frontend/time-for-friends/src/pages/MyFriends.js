@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Container, Row, Col,Spinner } from 'reactstrap';
+import { Container, Row, Col, Spinner} from 'reactstrap';
 import Person from '../entities/Person';
-import FriendCard from '../components/FriendCard'
+import FriendCard from '../components/FriendCard';
+import SearchBar from '../components/SearchBar';
+
 
 export default class MyFriends extends Component {
 
@@ -9,10 +11,13 @@ export default class MyFriends extends Component {
         persons: null
     }
 
-    async componentDidMount(){
+    async componentDidMount() {
+        this.handleSearch();
+    }
+
+    async handleSearch(query){
         let person = new Person();
-        this.setState({persons: await person.find({},{populate:['city','country','timezone']})})
-        console.log(this.state.persons)
+        this.setState({ persons: await person.find(query, { populate: ['city', 'country', 'timezone'] }) })
     }
 
     render() {
@@ -20,17 +25,20 @@ export default class MyFriends extends Component {
             return (
                 <Container>
                     <Row>
-                        {this.state.persons.map(person => 
+                       {/*  <Col sm="12">
+                            <SearchBar handleSearch={this.handleSearch.bind(this)} />
+                        </Col> */}
+                        {this.state.persons.map(person =>
                             <Col key={person._id} sm="4"><FriendCard person={person}></FriendCard></Col>
-                            )}
+                        )}
                     </Row>
                 </Container >
-           
-        );
-        }else{
+
+            );
+        } else {
             return (<Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />);
         }
-       
+
     }
 
 }

@@ -9,6 +9,8 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "bootstrap": "^4.3.1",
     "http-proxy-middleware": "^0.20.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-geosuggest": "^2.12.0",
