@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
 import './App.css';
 import Home from './pages/Home';
-import AddFriend from './pages/AddFriend'
+import AddFriend from './pages/AddFriend';
 import MyFriends from './pages/MyFriends';
-import NavigationBar from './components/NavigationBar'
+import NavigationBar from './components/NavigationBar';
 import { BrowserRouter as Router, Route} from "react-router-dom";
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import {faPhone,faEnvelope,faCity,faFlag,faSignature,faGlobeEurope} from '@fortawesome/free-solid-svg-icons';
+
+library.add(fab,faPhone,faEnvelope,faCity,faFlag,faSignature,faGlobeEurope);
 
 
 export default class App extends Component {
