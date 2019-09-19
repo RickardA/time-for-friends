@@ -98,7 +98,6 @@ America/Cordoba
 America/Costa_Rica
 America/Creston
 America/Cuiaba
-[100 … 199]
 America/Curacao
 America/Danmarkshavn
 America/Dawson
@@ -199,7 +198,6 @@ America/Santo_Domingo
 America/Sao_Paulo
 America/Scoresbysund
 America/Shiprock
-[200 … 299]
 America/Sitka
 America/St_Barthelemy
 America/St_Johns
@@ -300,7 +298,6 @@ Asia/Oral
 Asia/Phnom_Penh
 Asia/Pontianak
 Asia/Pyongyang
-[300 … 399]
 Asia/Qatar
 Asia/Qostanay
 Asia/Qyzylorda
@@ -401,7 +398,6 @@ Etc/GMT+3
 Etc/GMT+4
 Etc/GMT+5
 Etc/GMT+6
-[400 … 499]
 Etc/GMT+7
 Etc/GMT+8
 Etc/GMT+9
@@ -502,7 +498,6 @@ Iceland
 Indian/Antananarivo
 Indian/Chagos
 Indian/Christmas
-[500 … 592]
 Indian/Cocos
 Indian/Comoro
 Indian/Kerguelen
