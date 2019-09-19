@@ -72,7 +72,7 @@ function loadCities() {
 }
 
 async function createFakeData() {
-    
+
     let data = {
         City: [{}],
         Country: [{}],
@@ -102,7 +102,7 @@ async function createFakeData() {
                 data[key].push(line);
             }));
 
-            
+
         }
     };
 
@@ -110,8 +110,12 @@ async function createFakeData() {
         let Person = require('./entities/Person');
         Person.collection.deleteMany({});
 
-       for (let i = 0; i < 30; i++) {
-           let ranNum = Math.floor(Math.random() * 30); 
+        let oldRanNum;
+        let ranNum;
+        for (let i = 0; i < 30; i++) {
+            do {
+                ranNum = Math.floor(Math.random() * 30);
+            } while (ranNum === oldRanNum);
             let tempPerson = new Person({
                 firstName: data['persons'][ranNum].split(" ")[0],
                 lastName: data['persons'][ranNum].split(" ")[1],
@@ -121,6 +125,7 @@ async function createFakeData() {
                 country: data['Country'][ranNum]._id,
                 timezone: data['Timezone'][Math.floor(Math.random() * 500)]._id
             })
+            oldRanNum = ranNum;
             tempPerson.save();
         }
     })
