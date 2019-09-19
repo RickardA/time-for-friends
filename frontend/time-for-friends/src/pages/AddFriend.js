@@ -34,6 +34,7 @@ export default class AddFriend extends Component {
     async componentDidMount() {
         let timeZone = new TimeZone();
         this.setState({ timeZones: await timeZone.find() })
+        console.log(this.state.timeZones)
     }
 
     validateForm(event) {

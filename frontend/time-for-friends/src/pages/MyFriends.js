@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Spinner} from 'reactstrap';
+import { Container, Row, Col, Spinner } from 'reactstrap';
 import Person from '../entities/Person';
 import FriendCard from '../components/FriendCard';
 import SearchBar from '../components/SearchBar';
@@ -15,19 +15,21 @@ export default class MyFriends extends Component {
         this.handleSearch();
     }
 
-    async handleSearch(query){
+    async handleSearch(query) {
         let person = new Person();
-        this.setState({ persons: await person.find(query, { populate: ['city', 'country', 'timezone'] }) })
+        this.setState({ persons: await person.find(query, { populate: ['city', 'country', 'timezone'],sort:{firstName:1} }) })
     }
 
     render() {
         if (this.state.persons) {
             return (
                 <Container>
-                    <Row>
-                       {/*  <Col sm="12">
+                    <Row >
+                        <Col sm="12">
                             <SearchBar handleSearch={this.handleSearch.bind(this)} />
-                        </Col> */}
+                        </Col>
+                    </Row>
+                    <Row>
                         {this.state.persons.map(person =>
                             <Col key={person._id} sm="4"><FriendCard person={person}></FriendCard></Col>
                         )}

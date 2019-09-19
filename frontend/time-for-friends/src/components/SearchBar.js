@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Form, FormGroup, Label, Input } from 'reactstrap';
+import { Form, FormGroup, Label, Input } from 'reactstrap';
 
 
 export default class SearchBar extends Component {
@@ -11,27 +11,28 @@ export default class SearchBar extends Component {
     componentDidMount() {
     }
 
-    handleSearchByName(event){
+    handleSearchByName(event) {
         event.preventDefault();
         const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
         const name = event.target.name;
 
-        this.setState({[name]: value},() => {
-            this.props.handleSearch({firstName: { $regex: `${this.state.nameSearchVal}.*`}});
+        this.setState({ [name]: value }, () => {
+            this.props.handleSearch({ firstName: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }});
         })
     }
 
     render() {
-            return (
+        return (
+            <div>
                 <Form>
                     <FormGroup>
-                        <Label for="nameSearch">Search by name</Label>
+                        <Label for="nameSearch">Search by First Name</Label>
                         <Input type="text" onChange={this.handleSearchByName.bind(this)} value={this.nameSearchVal} name="nameSearchVal" id="nameSearch" placeholder="e.g. Nisse" />
                     </FormGroup>
                 </Form>
-
-            );
-        }
+            </div>
+        );
     }
+}
 
 
