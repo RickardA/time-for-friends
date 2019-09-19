@@ -1,0 +1,20 @@
+- Lägg till val för att sortera på för/efternamn
+    - Lägg till en toggle mellan för och efternamn []
+    - Skapa funktion som kollar vad toggle har för värde []
+    - Skicka in toggle värde i find funktionen []
+    - Testa []
+- Lägg till val för att sortera efter "time range"
+    - Lägg till så man kan välja en timerange []
+    - Funktion som kollar vad timerange värdet är []
+    - Custom funktion som plockar ut tidzon och räknar ut och jämför klockslag med angett klockslag []
+    - ...
+- Lägg till sortering efter tidzon
+    - Lägg till en knapp som gör att man främst sorterar efter tidzon
+- Fixa felhantering ifall databasen ligger nere
+- Lägg till regex validering i "add friend" formulär
+- Lägg till Here Maps API Autocomplete i "add friend" formulär på land/stad
+- Lägg till så tidzon sätts utifrån vilket/vilken land/stad som matas in
+- Lägg till så varje vän får en egen världskarta i sitt "FriendCard" där plats markeras
+- Fixa så url ändras vid sökning mm och kontrollera vid refresh och ladda in det som behövs
+- Snygga till design
+
