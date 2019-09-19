@@ -110,22 +110,16 @@ async function createFakeData() {
         let Person = require('./entities/Person');
         Person.collection.deleteMany({});
 
-        let oldRanNum;
-        let ranNum;
         for (let i = 0; i < 30; i++) {
-            do {
-                ranNum = Math.floor(Math.random() * 30);
-            } while (ranNum === oldRanNum);
             let tempPerson = new Person({
-                firstName: data['persons'][ranNum].split(" ")[0],
-                lastName: data['persons'][ranNum].split(" ")[1],
-                phoneNumber: data['phonenumbers'][ranNum],
-                email: data['emails'][ranNum],
-                city: data['City'][ranNum]._id,
-                country: data['Country'][ranNum]._id,
+                firstName: data['persons'][Math.floor(Math.random() * 29)].split(" ")[0],
+                lastName: data['persons'][Math.floor(Math.random() * 29)].split(" ")[1],
+                phoneNumber: data['phonenumbers'][Math.floor(Math.random() * 29)],
+                email: data['emails'][Math.floor(Math.random() * 29)],
+                city: data['City'][Math.floor(Math.random() * 29)]._id,
+                country: data['Country'][Math.floor(Math.random() * 29)]._id,
                 timezone: data['Timezone'][Math.floor(Math.random() * 500)]._id
             })
-            oldRanNum = ranNum;
             tempPerson.save();
         }
     })
