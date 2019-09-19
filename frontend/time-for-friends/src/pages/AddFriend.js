@@ -137,7 +137,7 @@ export default class AddFriend extends Component {
                                 onChange={this.handleInputChange}
                                 invalid={this.state.formError.phoneNumberError}
                                 id="phoneNumber"
-                                placeholder="e.g. 7612345678" />
+                                placeholder="e.g. +467612345678" />
                         </FormGroup>
                         <FormGroup>
                             <Label for="email">Email</Label>
