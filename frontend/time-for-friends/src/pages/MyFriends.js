@@ -18,6 +18,7 @@ export default class MyFriends extends Component {
     async handleSearch(query) {
         let person = new Person();
         this.setState({ persons: await person.find(query, { populate: ['city', 'country', 'timezone'],sort:{firstName:1} }) })
+        console.log(this.state.persons)
     }
 
     render() {

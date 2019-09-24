@@ -34,7 +34,6 @@ export default class AddFriend extends Component {
     async componentDidMount() {
         let timeZone = new TimeZone();
         this.setState({ timeZones: await timeZone.find() })
-        console.log(this.state.timeZones)
     }
 
     validateForm(event) {
@@ -66,10 +65,8 @@ export default class AddFriend extends Component {
                     timezone: this.state.formData.timeZone
                 })
                 if (await person.save()) {
-                    console.log('Success saving person, resetting form...');
                     this.resetFormData();
                 } else {
-                    console.log('Error saving person, printing error...')
                     this.toggleErrorModal();
                 }
             }

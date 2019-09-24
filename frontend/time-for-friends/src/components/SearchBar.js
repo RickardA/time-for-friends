@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
+import moment from 'moment-timezone';
 import { Form, FormGroup, Label, Input, Container, Row, Col } from 'reactstrap';
 
 
 export default class SearchBar extends Component {
 
     state = {
-        nameSearchVal: ''
+        nameSearchVal: '',
+        searchByRadioBtnVal: 'firstName',
+        fromTime: '',
+        toTime: '',
     }
 
     componentDidMount() {
@@ -13,12 +17,42 @@ export default class SearchBar extends Component {
 
     handleSearchByName(event) {
         event.preventDefault();
-        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        const value = event.target.value;
         const name = event.target.name;
 
         this.setState({ [name]: value }, () => {
-            this.props.handleSearch({ firstName: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } });
+            this.props.handleSearch({ [this.state.searchByRadioBtnVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } });
         })
+    }
+
+    handleRadioBtnChange(event) {
+        const value = event.target.value;
+
+        this.setState({ searchByRadioBtnVal: value }, () => {
+            this.props.handleSearch({ [this.state.searchByRadioBtnVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } });
+        });
+    }
+
+    handleTimeChange(event) {
+        const value = event.target.value;
+        const name = event.target.name;
+
+        this.setState({[name]: value},() =>{
+            this.calculateCurrentTimezones();
+        })
+    }
+
+    calculateCurrentTimezones(){
+        let currentTimezones = [];
+        const fromTime = moment(this.state.fromTime, 'HH:mm')
+        const toTime = moment(this.state.toTime, 'HH:mm')
+        moment.tz.names().forEach((timezone)=>{
+            const timeNow = moment(moment.tz(timezone).format('HH:mm'),'HH:mm')
+            if (fromTime.isAfter(timeNow) && toTime.isBefore(timeNow)) {
+                currentTimezones.push(timezone);
+            }
+        })
+    
     }
 
     render() {
@@ -27,19 +61,61 @@ export default class SearchBar extends Component {
                 <Row>
                     <Col sm="6">
                         <FormGroup>
-                            <Input type="text" onChange={this.handleSearchByName.bind(this)} value={this.nameSearchVal} name="nameSearchVal" id="nameSearch" placeholder="Search" />
+                            <Input
+                                type="text"
+                                onChange={this.handleSearchByName.bind(this)}
+                                value={this.state.nameSearchVal}
+                                name="nameSearchVal"
+                                id="nameSearch"
+                                placeholder="Search" />
                         </FormGroup>
                     </Col>
                     <Col sm="6">
-                        <FormGroup check tag="fieldset">
-                            <Label check>
-                                <Input type="radio" name="radio1" />
-                                FirstName
+                        <FormGroup tag="fieldset" >
+                            <FormGroup style={{ display: 'inline-block' }} >
+                                <Label check>
+                                    <Input
+                                        onChange={this.handleRadioBtnChange.bind(this)}
+                                        checked={this.state.searchByRadioBtnVal === 'firstName' ? true : false}
+                                        value="firstName"
+                                        type="radio"
+                                        name="firstNameRadio" />
+                                    FirstName
                              </Label>
-                            <Label check>
-                                <Input type="radio" name="radio1" />
-                                LastName
+                            </FormGroup>
+                            <FormGroup className="ml-4" style={{ display: 'inline-block' }}>
+                                <Label check>
+                                    <Input
+                                        onChange={this.handleRadioBtnChange.bind(this)}
+                                        checked={this.state.searchByRadioBtnVal === 'lastName' ? true : false}
+                                        value="lastName"
+                                        type="radio"
+                                        name="lastNameRadio" />
+                                    LastName
                             </Label>
+                            </FormGroup>
+                        </FormGroup>
+                    </Col>
+                    <Col sm="6">
+                        <FormGroup>
+                            <Label for="exampleTime">From:</Label>
+                            <Input
+                                type="time"
+                                name="fromTime"
+                                id="fromTime"
+                                placeholder="time placeholder"
+                                onChange={this.handleTimeChange.bind(this)}
+                            />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="exampleTime">To:</Label>
+                            <Input
+                                type="time"
+                                name="toTime"
+                                id="toTime"
+                                placeholder="time placeholder"
+                                onChange={this.handleTimeChange.bind(this)}
+                            />
                         </FormGroup>
                     </Col>
                 </Row>
