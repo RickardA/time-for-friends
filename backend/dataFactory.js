@@ -169,6 +169,7 @@ function loadTimeZones() {
 
 module.exports.loadCountries = loadCountries;
 module.exports.loadTimeZones = loadTimeZones;
+module.exports.loadCities = loadCities;
 module.exports.createFakeData = createFakeData;
 
 

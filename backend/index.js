@@ -28,7 +28,10 @@ function startWebServer() {
     app.listen(port, () => console.log(`${consoleColors.green}Listening on port: ${port}${consoleColors.white}`));
 
     let dataFactory = require('./dataFactory.js');
-    dataFactory.createFakeData();
+    // dataFactory.loadTimeZones();
+    //dataFactory.loadCountries();
+    //dataFactory.loadCities();
+    //dataFactory.createFakeData();
 }
 
 require('./entities/Person');
@@ -51,16 +54,82 @@ app.post('/api/:entity', async (req, res) => {
     }
 })
 
+app.get('/api/Person', async (req, res) => {
+    try {
+        req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
+        req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
+        const Model = mongoose.model('Person');
+        const result = await Model.aggregate([
+            {
+                $lookup: {
+                    from: "timezones",
+                    localField: "timezone",
+                    foreignField: "_id",
+                    as: "timezone"
+                }
+            },
+            {
+                $lookup: {
+                    from: "countries",
+                    localField: "country",
+                    foreignField: "_id",
+                    as: "country"
+                }
+            },
+            {
+                $lookup: {
+                    from: "cities",
+                    localField: "city",
+                    foreignField: "_id",
+                    as: "city" 
+                }
+            },
+            {
+                $addFields:
+                {
+                    hour: {
+                        $convert: {
+                            input: { $dateToString: { format: "%H", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
+                            , to: 'int'
+                        }
+                    },
+                    min: {
+                        $convert: {
+                            input: { $dateToString: { format: "%m", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
+                            , to: 'int'
+                        }
+                    },
+                    city: { $arrayElemAt: ["$city", 0] },
+                    country: { $arrayElemAt: ["$country", 0] },
+                    timezone: { $arrayElemAt: ["$timezone", 0] }
+                }
+            },
+            { $match: req.query.find }
+        ])
+        if (!result) {
+            res.status(401).json({ error: 'Nothing found' });
+            return;
+        } else {
+            console.log(result);
+            res.status(200).json(Object.values(result));
+        }
+    } catch (err) {
+        res.status(500).json({ error: err });
+        console.log(`${consoleColors.red}Error in get: ${err}${consoleColors.white}`);
+    }
+})
+
 app.get('/api/:entity', async (req, res) => {
     try {
         req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
         req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
         const Model = mongoose.model(req.params.entity);
-        const result = await Model.find(req.query.find, null, req.query.extras);
+        const result = await Model.find([req.query.find,null,req.query.extras]);
         if (!result) {
             res.status(401).json({ error: 'Nothing found' });
             return;
         } else {
+            console.log(result);
             res.status(200).json(Object.values(result));
         }
     } catch (err) {
@@ -71,7 +140,6 @@ app.get('/api/:entity', async (req, res) => {
 
 app.get('/api/:entity/:id', async (req, res) => {
     try {
-        req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
         req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
         const Model = mongoose.model(req.params.entity);
         let result = await Model.findOne(ObjectId(req.params.id), null, req.query.extras);
