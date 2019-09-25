@@ -16,7 +16,7 @@ export default class MyFriends extends Component {
     }
 
     async handleSearch(query,sort) {
-        sort = !sort ? {firstName:1} : sort;
+        sort = !sort ? {timezone:1,firstName:1} : sort;
         let person = new Person();
         this.setState({ persons: await person.find(query, sort) })
         console.log(this.state.persons)

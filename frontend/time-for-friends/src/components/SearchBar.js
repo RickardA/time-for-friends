@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FormGroup, Label, Input, Container, Row, Col, Button, InputGroup, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { FormGroup, Label, Input,ButtonGroup ,Button, InputGroup, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
@@ -27,9 +27,9 @@ export default class SearchBar extends Component {
             }
             timeSpan = this.calculateTimeSpan();
             if (timeSpan.from <= timeSpan.to) {
-                this.props.handleSearch({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, actualTime: { $gte: timeSpan.from, $lte: timeSpan.to } }, { [this.state.searchByVal]: 1 });
+                this.props.handleSearch({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, actualTime: { $gte: timeSpan.from, $lte: timeSpan.to } }, { timezone: 1,firstName:1 });
             } else {
-                this.props.handleSearch({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, $or: [{ actualTime: { $gte: timeSpan.from } }, { actualTime: { $lte: timeSpan.to } }] }, { [this.state.searchByVal]: 1 });
+                this.props.handleSearch({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, $or: [{ actualTime: { $gte: timeSpan.from } }, { actualTime: { $lte: timeSpan.to } }] }, { timezone: 1,firstName:1 });
             }
         })
     }
@@ -62,12 +62,18 @@ export default class SearchBar extends Component {
         })
     }
 
+    sortButtonPressed(event){
+        console.log(event.target.value);
+    }
+
     render() {
         return (
-            <div className="d-flex flex-column pl-5" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
-                <h4>Search</h4>
-                <div className="d-flex flex-wrap">
-                    <div className="flex-grow-1 mr-5 h-100">
+            <div className="d-flex flex-column pl-2 pr-2 pl-lg-5 pr-lg-5" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
+                <div className="d-flex flex-grow-1">
+                    <h4>Search</h4>
+                </div>
+                <div className="d-flex flex-column flex-md-row">
+                    <div className="d-flex flex-grow-1 h-100">
                         <InputGroup >
                             <Input
                                 type="text"
@@ -103,33 +109,41 @@ export default class SearchBar extends Component {
                             </InputGroupButtonDropdown>
                         </InputGroup>
                     </div>
-                    <div className="d-flex flex-wrap flex-grow-1 ml-5 align-items-baseline">
-                    <FormGroup>
-                        <Input
-                            type="time"
-                            name="fromTime"
-                            id="fromTime"
-                            value={this.state.fromTime}
-                            placeholder="time placeholder"
-                            onChange={this.performSearch.bind(this)}
-                        />
-                    </FormGroup>
-                    <FontAwesomeIcon icon='clock' className="ml-2 mr-2"/>
-                    <FormGroup className="mr-5">
-                        <Input
-                            type="time"
-                            name="toTime"
-                            id="toTime"
-                            value={this.state.toTime}
-                            placeholder="time placeholder"
-                            onChange={this.performSearch.bind(this)}
-                        />
-                    </FormGroup>
-                    <Button className="ml-5" color="danger" onClick={this.resetSearchForm.bind(this)}>Reset search</Button>
+                    <div className="d-flex align-items-baseline justify-content-center flex-grow-1 mt-2 mt-md-0">
+                        <FormGroup>
+                            <Input
+                                type="time"
+                                name="fromTime"
+                                id="fromTime"
+                                value={this.state.fromTime}
+                                placeholder="time placeholder"
+                                onChange={this.performSearch.bind(this)}
+                            />
+                        </FormGroup>
+                        <FontAwesomeIcon className="mr-2 ml-2" icon='clock' />
+                        <FormGroup>
+                            <Input
+                                type="time"
+                                name="toTime"
+                                id="toTime"
+                                value={this.state.toTime}
+                                placeholder="time placeholder"
+                                onChange={this.performSearch.bind(this)}
+                            />
+                        </FormGroup>
                     </div>
-                    
+                    <Button className="mb-2 h-100" color="danger" onClick={this.resetSearchForm.bind(this)}>Reset search</Button>
                 </div>
-                
+                <div className="d-flex mb-2 flex-column align-items-center">
+                    <Label>Sort By:</Label>
+                    <div className="d-flex justify-content-center">
+                    <ButtonGroup>
+                        <Button color="primary" value="firstName" onClick={this.sortButtonPressed.bind(this)}>First name</Button>
+                        <Button color="primary" value="lastName" onClick={this.sortButtonPressed.bind(this)}>Last name</Button>
+                        <Button color="primary" value="timezone" onClick={this.sortButtonPressed.bind(this)}>Timezone</Button>
+                    </ButtonGroup>
+                    </div>
+                </div>
             </div>
         );
     }
