@@ -57,6 +57,7 @@ app.post('/api/:entity', async (req, res) => {
 app.get('/api/Person', async (req, res) => {
     try {
         req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
+        console.log(req.query.find)
         req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
         const Model = mongoose.model('Person');
         const result = await Model.aggregate([
@@ -81,30 +82,28 @@ app.get('/api/Person', async (req, res) => {
                     from: "cities",
                     localField: "city",
                     foreignField: "_id",
-                    as: "city" 
+                    as: "city"
                 }
             },
             {
                 $addFields:
                 {
-                    hour: {
-                        $convert: {
+                    actualTime: {
+                        $sum: [{$multiply: [{$convert: {
                             input: { $dateToString: { format: "%H", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
                             , to: 'int'
-                        }
-                    },
-                    min: {
-                        $convert: {
-                            input: { $dateToString: { format: "%m", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
+                        }},60]},{$convert: {
+                            input: { $dateToString: { format: "%M", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
                             , to: 'int'
-                        }
+                        }}]
                     },
                     city: { $arrayElemAt: ["$city", 0] },
                     country: { $arrayElemAt: ["$country", 0] },
                     timezone: { $arrayElemAt: ["$timezone", 0] }
                 }
             },
-            { $match: req.query.find }
+            { $match: req.query.find },
+            { $sort: req.query.extras }
         ])
         if (!result) {
             res.status(401).json({ error: 'Nothing found' });
@@ -124,7 +123,7 @@ app.get('/api/:entity', async (req, res) => {
         req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
         req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
         const Model = mongoose.model(req.params.entity);
-        const result = await Model.find([req.query.find,null,req.query.extras]);
+        const result = await Model.find([req.query.find, null, req.query.extras]);
         if (!result) {
             res.status(401).json({ error: 'Nothing found' });
             return;
