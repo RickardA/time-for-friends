@@ -21,7 +21,7 @@ export default class SearchBar extends Component {
         const name = event.target.name;
 
         this.setState({ [name]: value }, () => {
-            this.props.handleSearch({ [this.state.searchByRadioBtnVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } });
+            this.props.handleSearch({ [this.state.searchByRadioBtnVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } }, {[this.state.searchByRadioBtnVal]:1});
         })
     }
 
@@ -29,7 +29,7 @@ export default class SearchBar extends Component {
         const value = event.target.value;
 
         this.setState({ searchByRadioBtnVal: value }, () => {
-            this.props.handleSearch({ [this.state.searchByRadioBtnVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } });
+            this.props.handleSearch({ [this.state.searchByRadioBtnVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } }, {[this.state.searchByRadioBtnVal]:1});
         });
     }
 
@@ -38,7 +38,19 @@ export default class SearchBar extends Component {
         const name = event.target.name;
 
         this.setState({[name]: value},() =>{
-            this.calculateCurrentTimezones();
+            const fromTimeHour = parseInt(this.state.fromTime.split(':')[0]);
+            const fromTimeMin = parseInt(this.state.fromTime.split(':')[1]);
+            const toTimeHour = parseInt(this.state.toTime.split(':')[0]);
+            const toTimeMin = parseInt(this.state.toTime.split(':')[1]);
+
+            const fromTimes = (fromTimeHour * 60) + fromTimeMin;
+            const toTimes = (toTimeHour * 60) + toTimeMin;
+
+            if(fromTimes <= toTimes){
+                this.props.handleSearch({actualTime: {$gte: fromTimes, $lte: toTimes}});
+            }else {
+                this.props.handleSearch({$or:[{actualTime: {$gte: fromTimes}},{actualTime: {$lte: toTimes}}]});
+            }
         })
     }
 
