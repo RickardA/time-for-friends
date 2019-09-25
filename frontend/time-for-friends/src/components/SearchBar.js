@@ -1,70 +1,58 @@
 import React, { Component } from 'react';
-import moment from 'moment-timezone';
-import { Form, FormGroup, Label, Input, Container, Row, Col } from 'reactstrap';
+import { FormGroup, Label, Input, Container, Row, Col,Button } from 'reactstrap';
 
 
 export default class SearchBar extends Component {
 
     state = {
         nameSearchVal: '',
-        searchByRadioBtnVal: 'firstName',
-        fromTime: '',
-        toTime: '',
+        searchByRadioBtn: 'firstName',
+        fromTime: '00:00',
+        toTime: '23:59',
     }
 
     componentDidMount() {
     }
 
-    handleSearchByName(event) {
+    performSearch(event) {
         event.preventDefault();
         const value = event.target.value;
         const name = event.target.name;
 
         this.setState({ [name]: value }, () => {
-            this.props.handleSearch({ [this.state.searchByRadioBtnVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } }, {[this.state.searchByRadioBtnVal]:1});
-        })
-    }
-
-    handleRadioBtnChange(event) {
-        const value = event.target.value;
-
-        this.setState({ searchByRadioBtnVal: value }, () => {
-            this.props.handleSearch({ [this.state.searchByRadioBtnVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' } }, {[this.state.searchByRadioBtnVal]:1});
-        });
-    }
-
-    handleTimeChange(event) {
-        const value = event.target.value;
-        const name = event.target.name;
-
-        this.setState({[name]: value},() =>{
-            const fromTimeHour = parseInt(this.state.fromTime.split(':')[0]);
-            const fromTimeMin = parseInt(this.state.fromTime.split(':')[1]);
-            const toTimeHour = parseInt(this.state.toTime.split(':')[0]);
-            const toTimeMin = parseInt(this.state.toTime.split(':')[1]);
-
-            const fromTimes = (fromTimeHour * 60) + fromTimeMin;
-            const toTimes = (toTimeHour * 60) + toTimeMin;
-
-            if(fromTimes <= toTimes){
-                this.props.handleSearch({actualTime: {$gte: fromTimes, $lte: toTimes}});
-            }else {
-                this.props.handleSearch({$or:[{actualTime: {$gte: fromTimes}},{actualTime: {$lte: toTimes}}]});
+            let timeSpan = {
+                from: 0,
+                to: 1440
+            }
+                timeSpan = this.calculateTimeSpan();
+            if (timeSpan.from <= timeSpan.to) {
+                this.props.handleSearch({ [this.state.searchByRadioBtn]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, actualTime: { $gte: timeSpan.from, $lte: timeSpan.to } },{[this.state.searchByRadioBtn]:1});
+            } else {
+                this.props.handleSearch({ [this.state.searchByRadioBtn]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, $or: [{ actualTime: { $gte: timeSpan.from } }, { actualTime: { $lte: timeSpan.to } }] },{[this.state.searchByRadioBtn]:1});
             }
         })
     }
 
-    calculateCurrentTimezones(){
-        let currentTimezones = [];
-        const fromTime = moment(this.state.fromTime, 'HH:mm')
-        const toTime = moment(this.state.toTime, 'HH:mm')
-        moment.tz.names().forEach((timezone)=>{
-            const timeNow = moment(moment.tz(timezone).format('HH:mm'),'HH:mm')
-            if (fromTime.isAfter(timeNow) && toTime.isBefore(timeNow)) {
-                currentTimezones.push(timezone);
-            }
+    calculateTimeSpan() {
+        const fromTimeHour = parseInt(this.state.fromTime.split(':')[0]);
+        const fromTimeMin = parseInt(this.state.fromTime.split(':')[1]);
+        const toTimeHour = parseInt(this.state.toTime.split(':')[0]);
+        const toTimeMin = parseInt(this.state.toTime.split(':')[1]);
+
+        const fromTimes = (fromTimeHour * 60) + fromTimeMin;
+        const toTimes = (toTimeHour * 60) + toTimeMin;
+
+        return {from: fromTimes, to: toTimes}
+    }
+
+    resetSearchForm(event){
+        this.setState({
+            nameSearchVal: '',
+            searchByRadioBtn: 'firstName',
+            fromTime: '00:00',
+            toTime: '23:59',
         })
-    
+        this.performSearch(event);
     }
 
     render() {
@@ -75,7 +63,7 @@ export default class SearchBar extends Component {
                         <FormGroup>
                             <Input
                                 type="text"
-                                onChange={this.handleSearchByName.bind(this)}
+                                onChange={this.performSearch.bind(this)}
                                 value={this.state.nameSearchVal}
                                 name="nameSearchVal"
                                 id="nameSearch"
@@ -87,22 +75,22 @@ export default class SearchBar extends Component {
                             <FormGroup style={{ display: 'inline-block' }} >
                                 <Label check>
                                     <Input
-                                        onChange={this.handleRadioBtnChange.bind(this)}
-                                        checked={this.state.searchByRadioBtnVal === 'firstName' ? true : false}
+                                        onChange={this.performSearch.bind(this)}
+                                        checked={this.state.searchByRadioBtn === 'firstName' ? true : false}
                                         value="firstName"
                                         type="radio"
-                                        name="firstNameRadio" />
+                                        name="searchByRadioBtn" />
                                     FirstName
                              </Label>
                             </FormGroup>
                             <FormGroup className="ml-4" style={{ display: 'inline-block' }}>
                                 <Label check>
                                     <Input
-                                        onChange={this.handleRadioBtnChange.bind(this)}
-                                        checked={this.state.searchByRadioBtnVal === 'lastName' ? true : false}
+                                        onChange={this.performSearch.bind(this)}
+                                        checked={this.state.searchByRadioBtn === 'lastName' ? true : false}
                                         value="lastName"
                                         type="radio"
-                                        name="lastNameRadio" />
+                                        name="searchByRadioBtn" />
                                     LastName
                             </Label>
                             </FormGroup>
@@ -110,25 +98,30 @@ export default class SearchBar extends Component {
                     </Col>
                     <Col sm="6">
                         <FormGroup>
-                            <Label for="exampleTime">From:</Label>
+                            <Label for="fromTime">From:</Label>
                             <Input
                                 type="time"
                                 name="fromTime"
                                 id="fromTime"
+                                value={this.state.fromTime}
                                 placeholder="time placeholder"
-                                onChange={this.handleTimeChange.bind(this)}
+                                onChange={this.performSearch.bind(this)}
                             />
                         </FormGroup>
                         <FormGroup>
-                            <Label for="exampleTime">To:</Label>
+                            <Label for="toTime">To:</Label>
                             <Input
                                 type="time"
                                 name="toTime"
                                 id="toTime"
+                                value={this.state.toTime}
                                 placeholder="time placeholder"
-                                onChange={this.handleTimeChange.bind(this)}
+                                onChange={this.performSearch.bind(this)}
                             />
                         </FormGroup>
+                    </Col>
+                    <Col>
+                    <Button color="primary" onClick={this.resetSearchForm.bind(this)}>Reset</Button>
                     </Col>
                 </Row>
             </Container>
