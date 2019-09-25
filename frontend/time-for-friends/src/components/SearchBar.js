@@ -64,11 +64,11 @@ export default class SearchBar extends Component {
 
     render() {
         return (
-            <div style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
+            <div className="d-flex flex-column" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
                 <h4>Search</h4>
-                <Row>
-                    <Col md={{size:4,offset:1}} sm={{size:12,offset:1}} xs="12">
-                        <InputGroup>
+                <div className="d-flex flex-wrap">
+                    <div className="w-50 h-100">
+                        <InputGroup >
                             <Input
                                 type="text"
                                 onChange={this.performSearch.bind(this)}
@@ -102,36 +102,32 @@ export default class SearchBar extends Component {
                                 </DropdownMenu>
                             </InputGroupButtonDropdown>
                         </InputGroup>
-                    </Col>
-                    <Col xs={{ size: 5, }} md={{ size: 2, }}  sm={{ size: 12, }}>
-                        <FormGroup>
-                            <Input
-                                type="time"
-                                name="fromTime"
-                                id="fromTime"
-                                value={this.state.fromTime}
-                                placeholder="time placeholder"
-                                onChange={this.performSearch.bind(this)}
-                            />
-                        </FormGroup>
-                    </Col>
-                        <FontAwesomeIcon icon='clock' />
-                    <Col xs={{ size: 5 }} sm={{ size: 2, }}>
-                        <FormGroup>
-                            <Input
-                                type="time"
-                                name="toTime"
-                                id="toTime"
-                                value={this.state.toTime}
-                                placeholder="time placeholder"
-                                onChange={this.performSearch.bind(this)}
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col md={{size:2}}>
-                        <Button color="danger" onClick={this.resetSearchForm.bind(this)}>Reset</Button>
-                    </Col>
-                </Row>
+                    </div>
+                    <div className="d-flex w-25 ml-2 align-items-baseline">
+                    <FormGroup>
+                        <Input
+                            type="time"
+                            name="fromTime"
+                            id="fromTime"
+                            value={this.state.fromTime}
+                            placeholder="time placeholder"
+                            onChange={this.performSearch.bind(this)}
+                        />
+                    </FormGroup>
+                    <FontAwesomeIcon icon='clock' className="ml-2 mr-2"/>
+                    <FormGroup>
+                        <Input
+                            type="time"
+                            name="toTime"
+                            id="toTime"
+                            value={this.state.toTime}
+                            placeholder="time placeholder"
+                            onChange={this.performSearch.bind(this)}
+                        />
+                    </FormGroup>
+                    </div>
+                </div>
+                <Button color="danger" onClick={this.resetSearchForm.bind(this)}>Reset</Button>
             </div>
         );
     }
