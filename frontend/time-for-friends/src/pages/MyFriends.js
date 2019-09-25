@@ -27,7 +27,7 @@ export default class MyFriends extends Component {
             return (
                 <Container>
                     <Row >
-                        <Col sm="12">
+                        <Col sm="12" className="mt-5">
                             <SearchBar handleSearch={this.handleSearch.bind(this)} />
                         </Col>
                     </Row>

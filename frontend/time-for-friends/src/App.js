@@ -7,9 +7,9 @@ import NavigationBar from './components/NavigationBar';
 import { BrowserRouter as Router, Route} from "react-router-dom";
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
-import {faPhone,faEnvelope,faCity,faFlag,faSignature,faGlobeEurope,faClock} from '@fortawesome/free-solid-svg-icons';
+import {faPhone,faEnvelope,faCity,faFlag,faSignature,faGlobeEurope,faClock,faCheck,faArrowsAltH,faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 
-library.add(fab,faPhone,faEnvelope,faCity,faFlag,faSignature,faGlobeEurope,faClock);
+library.add(fab,faPhone,faEnvelope,faCity,faFlag,faSignature,faGlobeEurope,faClock,faCheck,faArrowsAltH,faTrashAlt);
 
 
 export default class App extends Component {
