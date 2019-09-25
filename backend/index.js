@@ -57,7 +57,6 @@ app.post('/api/:entity', async (req, res) => {
 app.get('/api/Person', async (req, res) => {
     try {
         req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
-        console.log(req.query.find)
         req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
         const Model = mongoose.model('Person');
         const result = await Model.aggregate([
@@ -97,6 +96,10 @@ app.get('/api/Person', async (req, res) => {
                             , to: 'int'
                         }}]
                     },
+                    date: {
+                        $dateFromString: {dateString: {$dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }}
+                        
+                    },
                     city: { $arrayElemAt: ["$city", 0] },
                     country: { $arrayElemAt: ["$country", 0] },
                     timezone: { $arrayElemAt: ["$timezone", 0] }
@@ -109,7 +112,6 @@ app.get('/api/Person', async (req, res) => {
             res.status(401).json({ error: 'Nothing found' });
             return;
         } else {
-            console.log(result);
             res.status(200).json(Object.values(result));
         }
     } catch (err) {
