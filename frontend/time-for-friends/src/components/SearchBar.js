@@ -64,10 +64,10 @@ export default class SearchBar extends Component {
 
     render() {
         return (
-            <div className="d-flex flex-column" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
+            <div className="d-flex flex-column pl-5" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
                 <h4>Search</h4>
                 <div className="d-flex flex-wrap">
-                    <div className="w-50 h-100">
+                    <div className="flex-grow-1 mr-5 h-100">
                         <InputGroup >
                             <Input
                                 type="text"
@@ -103,7 +103,7 @@ export default class SearchBar extends Component {
                             </InputGroupButtonDropdown>
                         </InputGroup>
                     </div>
-                    <div className="d-flex w-25 ml-2 align-items-baseline">
+                    <div className="d-flex flex-wrap flex-grow-1 ml-5 align-items-baseline">
                     <FormGroup>
                         <Input
                             type="time"
@@ -115,7 +115,7 @@ export default class SearchBar extends Component {
                         />
                     </FormGroup>
                     <FontAwesomeIcon icon='clock' className="ml-2 mr-2"/>
-                    <FormGroup>
+                    <FormGroup className="mr-5">
                         <Input
                             type="time"
                             name="toTime"
@@ -125,9 +125,11 @@ export default class SearchBar extends Component {
                             onChange={this.performSearch.bind(this)}
                         />
                     </FormGroup>
+                    <Button className="ml-5" color="danger" onClick={this.resetSearchForm.bind(this)}>Reset search</Button>
                     </div>
+                    
                 </div>
-                <Button color="danger" onClick={this.resetSearchForm.bind(this)}>Reset</Button>
+                
             </div>
         );
     }
