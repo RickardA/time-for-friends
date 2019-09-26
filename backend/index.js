@@ -116,7 +116,7 @@ app.get('/api/Person', async (req, res) => {
         }
     } catch (err) {
         res.status(500).json({ error: err });
-        console.log(`${consoleColors.red}Error in get: ${err}${consoleColors.white}`);
+        console.log(`${consoleColors.red}Error in get person: ${err}${consoleColors.white}`);
     }
 })
 
@@ -125,17 +125,16 @@ app.get('/api/:entity', async (req, res) => {
         req.query.find = req.query.find ? JSON.parse(decodeURIComponent(req.query.find)) : {};
         req.query.extras = req.query.extras ? JSON.parse(decodeURIComponent(req.query.extras)) : {};
         const Model = mongoose.model(req.params.entity);
-        const result = await Model.find([req.query.find, null, req.query.extras]);
+        const result = await Model.find(req.query.find, null, req.query.extras);
         if (!result) {
             res.status(401).json({ error: 'Nothing found' });
             return;
         } else {
-            console.log(result);
             res.status(200).json(Object.values(result));
         }
     } catch (err) {
         res.status(500).json({ error: err });
-        console.log(`${consoleColors.red}Error in get: ${err}${consoleColors.white}`);
+        console.log(`${consoleColors.red}Error in get ${req.param.entity}: ${err}${consoleColors.white}`);
     }
 })
 
