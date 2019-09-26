@@ -16,7 +16,7 @@ export default class MyFriends extends Component {
     }
 
     async handleSearch(query,sort) {
-        sort = !sort ? {timezone:1,firstName:1} : sort;
+        sort = !sort ? {firstName:1} : sort;
         let person = new Person();
         this.setState({ persons: await person.find(query, sort) })
         console.log(this.state.persons)
@@ -33,7 +33,7 @@ export default class MyFriends extends Component {
                     </Row>
                     <Row>
                         {this.state.persons.map(person =>
-                            <Col key={person._id} sm="4"><FriendCard person={person}></FriendCard></Col>
+                            <Col key={person._id} sm="12" md="6" lg="4"><FriendCard person={person}></FriendCard></Col>
                         )}
                     </Row>
                 </Container >
