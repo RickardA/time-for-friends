@@ -4,6 +4,7 @@ import City from '../entities/City'
 import Country from '../entities/Country'
 import { Button, Form, FormGroup, Label, Input, Spinner, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { inject,observer } from 'mobx-react';
+import AutoComplete from '../components/AutoComplete';
 
 @inject('store')
 @observer
@@ -12,6 +13,7 @@ class AddFriend extends Component {
 
     state = {
         modalToggle: false,
+        countrySuggestions: null,
         formData: {
             firstName: '',
             lastName: '',
@@ -98,12 +100,6 @@ class AddFriend extends Component {
         this.getSuggestion();
     }
 
-    async getSuggestion(){
-        let result = await fetch(`http://autocomplete.geocoder.api.here.com/6.2/suggest.json?app_id=RaCeBN6d2qKOWzRWcBZu&app_code=_BOiSdF63exs1SfJ1tqmYg&query=valsgatan`,{
-            method: 'GET',
-        })
-        console.log(await result.json())
-    }
 
     render() {
         if (this.props.store.timezones) {
@@ -165,17 +161,11 @@ class AddFriend extends Component {
                                 invalid={this.state.formError.cityError}
                                 id="city" placeholder="e.g. Tomelilla" />
                         </FormGroup>
-                        <FormGroup>
-                            <Label for="country">Country</Label>
-                            <Input
-                                type="text"
-                                name="country"
-                                value={this.state.formData.country}
-                                onChange={this.handleInputChange}
-                                invalid={this.state.formError.countryError}
-                                id="country"
-                                placeholder="e.g. Sweden" />
-                        </FormGroup>
+                        <AutoComplete 
+                        labelText="Country" 
+                        name="country"
+                        placeholder="e.g. Sweden"
+                        />
                         <FormGroup>
                             <Label for="timeZone">TimeZone</Label>
                             <Input
