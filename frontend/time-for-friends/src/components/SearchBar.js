@@ -118,7 +118,9 @@ class SearchBar extends Component {
                                 name="timezone"
                                 value={this.props.store.timezones}
                                 onChange={this.performSearch.bind(this)}
-                                id="timeZone">
+                                id="timeZone"
+                                multiple={false}
+                                >
                                 <option value="">Show all timezones</option>
                                 {this.props.store.timezones.map(obj => <option key={obj._id} value={obj.offset}>{obj.offset}</option>)}
                             </Input>

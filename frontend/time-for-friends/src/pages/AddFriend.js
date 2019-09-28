@@ -95,6 +95,14 @@ class AddFriend extends Component {
         const name = event.target.name;
 
         this.setState({ formData: { ...this.state.formData, [name]: value } });
+        this.getSuggestion();
+    }
+
+    async getSuggestion(){
+        let result = await fetch(`http://autocomplete.geocoder.api.here.com/6.2/suggest.json?app_id=RaCeBN6d2qKOWzRWcBZu&app_code=_BOiSdF63exs1SfJ1tqmYg&query=valsgatan`,{
+            method: 'GET',
+        })
+        console.log(await result.json())
     }
 
     render() {
@@ -176,7 +184,9 @@ class AddFriend extends Component {
                                 value={this.state.formData.timeZone}
                                 onChange={this.handleInputChange}
                                 invalid={this.state.formError.timeZoneError}
-                                id="timeZone">
+                                id="timeZone"
+                                multiple={false}
+                                >
                                 <option value="">Choose a timezone</option>
                                 {this.props.store.timezones.map(obj => <option key={obj._id} value={obj._id}>{obj.offset}</option>)}
                             </Input>
