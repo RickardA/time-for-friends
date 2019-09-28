@@ -1,38 +1,28 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Spinner } from 'reactstrap';
-import Person from '../entities/Person';
 import FriendCard from '../components/FriendCard';
 import SearchBar from '../components/SearchBar';
+import {inject,observer} from 'mobx-react';
 
-
-export default class MyFriends extends Component {
-
-    state = {
-        persons: null
-    }
+@inject('store')
+@observer
+class MyFriends extends Component {
 
     async componentDidMount() {
-        this.handleSearch();
-    }
-
-    async handleSearch(query,sort) {
-        sort = !sort ? {firstName:1} : sort;
-        let person = new Person();
-        this.setState({ persons: await person.find(query, sort) })
-        console.log(this.state.persons)
+        this.props.store.getPersons();
     }
 
     render() {
-        if (this.state.persons) {
+        if (this.props.store.persons) {
             return (
                 <Container>
                     <Row >
                         <Col sm="12" className="mt-5">
-                            <SearchBar handleSearch={this.handleSearch.bind(this)} />
+                            <SearchBar />
                         </Col>
                     </Row>
                     <Row>
-                        {this.state.persons.map(person =>
+                        {this.props.store.persons.map(person =>
                             <Col key={person._id} sm="12" md="6" lg="4"><FriendCard person={person}></FriendCard></Col>
                         )}
                     </Row>
@@ -46,4 +36,6 @@ export default class MyFriends extends Component {
     }
 
 }
+
+export default MyFriends;
 

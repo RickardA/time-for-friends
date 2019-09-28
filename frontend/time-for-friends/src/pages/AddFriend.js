@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-import TimeZone from '../entities/Timezone'
 import Person from '../entities/Person'
 import City from '../entities/City'
 import Country from '../entities/Country'
 import { Button, Form, FormGroup, Label, Input, Spinner, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { inject,observer } from 'mobx-react';
 
-export default class AddFriend extends Component {
+@inject('store')
+@observer
+class AddFriend extends Component {
 
 
     state = {
-        timeZones: null,
         modalToggle: false,
         formData: {
             firstName: '',
@@ -31,9 +32,8 @@ export default class AddFriend extends Component {
         }
     }
 
-    async componentDidMount() {
-        let timeZone = new TimeZone();
-        this.setState({ timeZones: await timeZone.find() })
+    componentDidMount() {
+        this.props.store.getTimezones();
     }
 
     validateForm(event) {
@@ -50,7 +50,6 @@ export default class AddFriend extends Component {
             }
         }, async () => {
             if (Object.values(this.state.formError).indexOf(true) < 0) {
-                console.log('Save')
                 let city = new City({ name: this.state.formData.city });
                 await city.save();
                 let country = new Country({ name: this.state.formData.country });
@@ -99,7 +98,7 @@ export default class AddFriend extends Component {
     }
 
     render() {
-        if (this.state.timeZones) {
+        if (this.props.store.timezones) {
             return (
                 <div style={{ padding: '20px 20vw 20px 20vw' }}>
                     <h1>Add Friend</h1>
@@ -179,7 +178,7 @@ export default class AddFriend extends Component {
                                 invalid={this.state.formError.timeZoneError}
                                 id="timeZone">
                                 <option value="">Choose a timezone</option>
-                                {this.state.timeZones.map(obj => <option key={obj._id} value={obj._id}>{obj.offset}</option>)}
+                                {this.props.store.timezones.map(obj => <option key={obj._id} value={obj._id}>{obj.offset}</option>)}
                             </Input>
                         </FormGroup>
                         <Button type="submit">Submit</Button>
@@ -202,4 +201,6 @@ export default class AddFriend extends Component {
 
 
 }
+
+export default AddFriend;
 

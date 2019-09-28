@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { FormGroup, Label, Input, ButtonGroup, Button, InputGroup, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import TimeZone from '../entities/Timezone'
+import {inject,observer} from 'mobx-react';
 
-
-export default class SearchBar extends Component {
+@inject('store')
+@observer
+class SearchBar extends Component {
 
     state = {
         nameSearchVal: '',
@@ -14,12 +15,10 @@ export default class SearchBar extends Component {
         toTime: '23:59',
         searchByDropdown: false,
         timezone: '',
-        timezones: ''
     }
 
-    async componentDidMount() {
-        let timeZone = new TimeZone();
-        this.setState({ timeZones: await timeZone.find() })
+    componentDidMount() {
+        this.props.store.getTimezones();
     }
 
     performSearch(event) {
@@ -33,9 +32,9 @@ export default class SearchBar extends Component {
             }
             timeSpan = this.calculateTimeSpan();
             if (timeSpan.from <= timeSpan.to) {
-                this.props.handleSearch({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, 'timezone.offset': { $regex: `^${this.state.timezone}`}, actualTime: { $gte: timeSpan.from, $lte: timeSpan.to } },{[this.state.sortByVal]:1});
+                this.props.store.getPersons({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, 'timezone.offset': { $regex: `^${this.state.timezone}`}, actualTime: { $gte: timeSpan.from, $lte: timeSpan.to } },{[this.state.sortByVal]:1});
             } else {
-                this.props.handleSearch({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, 'timezone.offset': { $regex: `^${this.state.timezone}`}, $or: [{ actualTime: { $gte: timeSpan.from } }, { actualTime: { $lte: timeSpan.to } }] },{[this.state.sortByVal]:1});
+                this.props.store.getPersons({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, 'timezone.offset': { $regex: `^${this.state.timezone}`}, $or: [{ actualTime: { $gte: timeSpan.from } }, { actualTime: { $lte: timeSpan.to } }] },{[this.state.sortByVal]:1});
             }
         })
     }
@@ -70,7 +69,7 @@ export default class SearchBar extends Component {
     }
 
     render() {
-        if (this.state.timeZones) {
+        if (this.props.store.timezones) {
             return (
                 <div className="d-flex flex-column pl-2 pr-2 pl-lg-5 pr-lg-5" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
                     <div className="d-flex flex-grow-1">
@@ -85,7 +84,7 @@ export default class SearchBar extends Component {
                                     value={this.state.nameSearchVal}
                                     name="nameSearchVal"
                                     id="nameSearch"
-                                    placeholder="Enter text here" />
+                                    placeholder="Search" />
                                 <InputGroupButtonDropdown
                                     addonType="append"
                                     isOpen={this.state.searchByDropdown}
@@ -94,7 +93,7 @@ export default class SearchBar extends Component {
                                         color="primary"
                                         name="searchByDropdown"
                                         caret>
-                                        Search By
+                                        {this.state.searchByVal === 'firstName' ? 'By First Name': 'By Last Name'}
                                 </DropdownToggle>
                                     <DropdownMenu>
                                         <DropdownItem
@@ -117,11 +116,11 @@ export default class SearchBar extends Component {
                             <Input
                                 type="select"
                                 name="timezone"
-                                value={this.state.timezone}
+                                value={this.props.store.timezones}
                                 onChange={this.performSearch.bind(this)}
                                 id="timeZone">
                                 <option value="">Show all timezones</option>
-                                {this.state.timeZones.map(obj => <option key={obj._id} value={obj.offset}>{obj.offset}</option>)}
+                                {this.props.store.timezones.map(obj => <option key={obj._id} value={obj.offset}>{obj.offset}</option>)}
                             </Input>
                         </div>
                         <div className="d-flex align-items-baseline justify-content-center flex-grow-1 ml-lg-2 mr-lg-2 mt-3 mt-lg-0">
@@ -169,5 +168,7 @@ export default class SearchBar extends Component {
         }
     }
 }
+
+export default SearchBar;
 
 
