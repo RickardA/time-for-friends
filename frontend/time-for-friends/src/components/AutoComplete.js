@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from "react-dom";
 import {
     FormGroup, Label,
-    Input, ButtonGroup,
-    Button, InputGroup,
-    InputGroupButtonDropdown, DropdownToggle,
-    DropdownMenu, DropdownItem,
+    Input,
     ListGroup, ListGroupItem
 } from 'reactstrap';
 
@@ -23,7 +20,6 @@ export default class AutoComplete extends Component {
         this.setState({
             width: DOMNode.clientWidth
         });
-        console.log(DOMNode.clientWidth)
         document.addEventListener('mousedown', this.clickListener.bind(this), false);
     }
 
@@ -33,7 +29,9 @@ export default class AutoComplete extends Component {
 
 
     async getSuggestions(event) {
-        //this.props.onChange(event);
+        if (this.props.onChange) {
+            this.props.onChange(event);
+        }
         this.setState({
             inputFieldValue: event.target.value
         });
@@ -41,23 +39,20 @@ export default class AutoComplete extends Component {
             method: 'GET',
         })
         result = await result.json();
-        console.log(result)
         if (result.suggestions) {
             this.setState({
-                suggestions: result.suggestions.filter(suggestion => suggestion.matchLevel === 'country')
+                suggestions: result.suggestions.filter(suggestion => suggestion.matchLevel === this.props.suggestOn)
             });
         } else {
             this.setState({
                 suggestions: null
             })
         }
-        console.log(this.state.suggestions)
     }
 
-    suggestionClicked(event) {
-        console.log(event)
+    suggestionClicked(value) {
         this.setState({
-            inputFieldValue: event,
+            inputFieldValue: value,
             suggestions: ''
         });
     }
@@ -79,6 +74,7 @@ export default class AutoComplete extends Component {
             <FormGroup>
                 <Label for={this.props.name}>{this.props.labelText}</Label>
                 <Input
+                    autoComplete="off"
                     type="text"
                     name={this.props.name}
                     id="inputField"
@@ -87,9 +83,9 @@ export default class AutoComplete extends Component {
                     value={this.state.inputFieldValue}
                     ref="inputField"
                     placeholder={this.props.placeholder} />
-                {this.state.suggestions ? <ListGroup style={{ zIndex: '2', position: 'absolute', height: '200px', overflow: 'auto', width: this.state.width }}>
+                {this.state.suggestions ? <ListGroup style={{ zIndex: '2', position: 'absolute', height: '200px', overflow: 'auto', marginBottom: '2%', width: this.state.width * 0.98 }}>
                     {this.state.suggestions.map(suggestion =>
-                        <ListGroupItem action className="suggestionItem" onClick={() => this.suggestionClicked(suggestion.address.country)} key={suggestion.locationId} value={suggestion.address.country}>{suggestion.address.country}</ListGroupItem>
+                        <ListGroupItem action className="suggestionItem" onClick={() => this.suggestionClicked(suggestion.address[this.props.suggestOn])} key={suggestion.locationId} value={suggestion.address[this.props.suggestOn]}>{suggestion.address[this.props.suggestOn]}</ListGroupItem>
                     )}</ListGroup> : null}
             </FormGroup>
         )
