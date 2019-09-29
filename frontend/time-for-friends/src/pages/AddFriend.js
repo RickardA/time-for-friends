@@ -46,7 +46,7 @@ class AddFriend extends Component {
                 firstNameError: this.state.formData.firstName.length === 0 ? true : false,
                 lastNameError: this.state.formData.lastName.length === 0 ? true : false,
                 phoneNumberError: this.state.formData.phoneNumber.length === 0 ? true : false,
-                emailError: this.state.formData.email.length === 0 ? true : false,
+                emailError: this.state.formData.email.length === 0 || !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.formData.email) ? true : false,
                 cityError: this.state.formData.city.length === 0 ? true : false,
                 countryError: this.state.formData.country.length === 0 ? true : false,
                 timeZoneError: this.state.formData.timeZone.length === 0 ? true : false
