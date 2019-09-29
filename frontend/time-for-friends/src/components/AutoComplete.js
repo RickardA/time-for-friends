@@ -24,6 +24,11 @@ export default class AutoComplete extends Component {
             width: DOMNode.clientWidth
         });
         console.log(DOMNode.clientWidth)
+        document.addEventListener('mousedown', this.clickListener.bind(this), false);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.clickListener.bind(this), false);
     }
 
 
@@ -50,8 +55,23 @@ export default class AutoComplete extends Component {
     }
 
     suggestionClicked(event) {
-        event.preventDefault();
-        console.log(event.target.getAttribute('value'))
+        console.log(event)
+        this.setState({
+            inputFieldValue: event,
+            suggestions: ''
+        });
+    }
+
+    handleInputClick(event) {
+        this.getSuggestions(event);
+    }
+
+    clickListener(event) {
+        if (!event.target.getAttribute('class') || !event.target.getAttribute('class').includes('suggestionItem')) {
+            this.setState({
+                suggestions: ''
+            })
+        }
     }
 
     render() {
@@ -63,12 +83,13 @@ export default class AutoComplete extends Component {
                     name={this.props.name}
                     id="inputField"
                     onChange={this.getSuggestions.bind(this)}
+                    onClick={this.handleInputClick.bind(this)}
                     value={this.state.inputFieldValue}
                     ref="inputField"
                     placeholder={this.props.placeholder} />
                 {this.state.suggestions ? <ListGroup style={{ zIndex: '2', position: 'absolute', height: '200px', overflow: 'auto', width: this.state.width }}>
                     {this.state.suggestions.map(suggestion =>
-                        <ListGroupItem action onClick={this.suggestionClicked.bind(this)} key={suggestion.locationId} value={suggestion.address.country}>{suggestion.address.country}</ListGroupItem>
+                        <ListGroupItem action className="suggestionItem" onClick={() => this.suggestionClicked(suggestion.address.country)} key={suggestion.locationId} value={suggestion.address.country}>{suggestion.address.country}</ListGroupItem>
                     )}</ListGroup> : null}
             </FormGroup>
         )
