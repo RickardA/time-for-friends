@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FormGroup, Label, Input, ButtonGroup, Button, InputGroup, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {inject,observer} from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 
 @inject('store')
 @observer
@@ -25,18 +25,18 @@ class SearchBar extends Component {
         event.preventDefault();
         const value = event.target.value;
         const name = event.target.name;
-        this.setState({ [name]: value }, () => {
+        this.setState((prevState) => { return { ...prevState, [name]: value } }, () => {
             let timeSpan = {
                 from: 0,
                 to: 1440
             }
             timeSpan = this.calculateTimeSpan();
             if (timeSpan.from <= timeSpan.to) {
-                this.props.store.getPersons({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, 'timezone.offset': { $regex: `^${this.state.timezone}`}, actualTime: { $gte: timeSpan.from, $lte: timeSpan.to } },{[this.state.sortByVal]:1});
+                this.props.store.getPersons({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, 'timezone.offset': { $regex: `^${this.state.timezone}` }, actualTime: { $gte: timeSpan.from, $lte: timeSpan.to } }, { [this.state.sortByVal]: 1 });
             } else {
-                this.props.store.getPersons({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, 'timezone.offset': { $regex: `^${this.state.timezone}`}, $or: [{ actualTime: { $gte: timeSpan.from } }, { actualTime: { $lte: timeSpan.to } }] },{[this.state.sortByVal]:1});
+                this.props.store.getPersons({ [this.state.searchByVal]: { $regex: `^${this.state.nameSearchVal}.*`, $options: 'i' }, 'timezone.offset': { $regex: `^${this.state.timezone}` }, $or: [{ actualTime: { $gte: timeSpan.from } }, { actualTime: { $lte: timeSpan.to } }] }, { [this.state.sortByVal]: 1 });
             }
-        })
+        });
     }
 
     calculateTimeSpan() {
@@ -52,20 +52,26 @@ class SearchBar extends Component {
     }
 
     resetSearchForm(event) {
-        this.setState({
-            nameSearchVal: '',
-            searchByVal: 'firstName',
-            fromTime: '00:00',
-            toTime: '23:59',
-            timezone: ''
-        })
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                nameSearchVal: '',
+                searchByVal: 'firstName',
+                fromTime: '00:00',
+                toTime: '23:59',
+                timezone: ''
+            }
+        });
         this.performSearch(event);
     }
 
     toggleSearchByDropdown() {
-        this.setState({
-            searchByDropdown: !this.state.searchByDropdown
-        })
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                searchByDropdown: !this.state.searchByDropdown
+            }
+        });
     }
 
     render() {
@@ -93,8 +99,8 @@ class SearchBar extends Component {
                                         color="primary"
                                         name="searchByDropdown"
                                         caret>
-                                        {this.state.searchByVal === 'firstName' ? 'By First Name': 'By Last Name'}
-                                </DropdownToggle>
+                                        {this.state.searchByVal === 'firstName' ? 'By First Name' : 'By Last Name'}
+                                    </DropdownToggle>
                                     <DropdownMenu>
                                         <DropdownItem
                                             name="searchByVal"
@@ -120,7 +126,7 @@ class SearchBar extends Component {
                                 onChange={this.performSearch.bind(this)}
                                 id="timeZone"
                                 multiple={false}
-                                >
+                            >
                                 <option value="">Show all timezones</option>
                                 {this.props.store.timezones.map(obj => <option key={obj._id} value={obj.offset}>{obj.offset}</option>)}
                             </Input>
@@ -152,7 +158,7 @@ class SearchBar extends Component {
                         <DropdownItem divider />
                     </div>
                     <div className="d-flex mb-2 flex-column align-items-center">
-                        <Label style={{textDecoration:'underline'}}>Order By</Label>
+                        <Label style={{ textDecoration: 'underline' }}>Order By</Label>
                         <div className="d-flex justify-content-center">
                             <ButtonGroup>
                                 <Button color="primary" name="sortByVal" value="firstName" onClick={this.performSearch.bind(this)} active={this.state.sortByVal === 'firstName'}>First Name</Button>

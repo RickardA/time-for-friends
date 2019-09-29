@@ -12,13 +12,15 @@ export default class AutoComplete extends Component {
     state = {
         width: 0,
         suggestions: null,
-        inputFieldValue: ''
     }
 
     componentDidMount() {
         const DOMNode = ReactDOM.findDOMNode(this.refs.inputField)
-        this.setState({
-            width: DOMNode.clientWidth
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                width: DOMNode.clientWidth
+            }
         });
         document.addEventListener('mousedown', this.clickListener.bind(this), false);
     }
@@ -32,45 +34,51 @@ export default class AutoComplete extends Component {
         const eventValue = event.target.value;
         const eventType = event.type;
 
+        console.log("asd", eventValue);
+
         if (this.props.updateValue) {
-            this.props.updateValue(null,eventValue,eventName);
+            this.props.updateValue(null, eventValue, eventName);
         }
-        this.setState({
-            inputFieldValue: event.target.value
-        });
         let result = await fetch(`http://autocomplete.geocoder.api.here.com/6.2/suggest.json?app_id=RaCeBN6d2qKOWzRWcBZu&app_code=_BOiSdF63exs1SfJ1tqmYg&language=en&query=${event.target.value}`, {
             method: 'GET',
         })
         result = await result.json();
         if (result.suggestions) {
-            this.setState({
-                suggestions: result.suggestions.filter(suggestion => suggestion.matchLevel === this.props.suggestOn)
+            this.setState((prevState) => {
+                return {
+                    ...prevState,
+                    suggestions: result.suggestions.filter(suggestion => suggestion.matchLevel === this.props.suggestOn)
+                }
             }, () => {
                 if (eventType !== 'click') {
                     if (this.props.bindSuggestion) {
                         this.props.bindSuggestion(eventValue, eventName, this.state.suggestions);
                     }
                 }
-            });
+            }
+            );
         } else {
-            this.setState({
-                suggestions: null
+            this.setState((prevState) => {
+                return {
+                    ...prevState,
+                    suggestions: null
+                }
             })
         }
     }
 
     suggestionClicked(value, name) {
-        this.setState({
-            inputFieldValue: value,
-        });
         if (this.props.bindSuggestion) {
             this.props.bindSuggestion(value, name, this.state.suggestions)
         }
         if (this.props.updateValue) {
-            this.props.updateValue(null,value,name);
+            this.props.updateValue(null, value, name);
         }
-        this.setState({
-            suggestions: ''
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                suggestions: ''
+            }
         })
     }
 
@@ -80,18 +88,18 @@ export default class AutoComplete extends Component {
 
     clickListener(event) {
         if (!event.target.getAttribute('class') || !event.target.getAttribute('class').includes('suggestionItem')) {
-            this.setState({
-                suggestions: ''
+            this.setState((prevState) => {
+                return {
+                    ...prevState,
+                    suggestions: ''
+                }
             })
         }
     }
 
-    setInputValue(value,name) {
-        this.setState({
-            inputFieldValue: value
-        })
+    setInputValue(value, name) {
         if (this.props.updateValue) {
-            this.props.updateValue(null,value,name);
+            this.props.updateValue(null, value, name);
         }
     }
 
@@ -107,7 +115,7 @@ export default class AutoComplete extends Component {
                     onChange={this.getSuggestions.bind(this)}
                     onClick={this.handleInputClick.bind(this)}
                     invalid={this.props.invalid}
-                    value={this.state.inputFieldValue}
+                    value={this.props.value}
                     ref="inputField"
                     placeholder={this.props.placeholder} />
                 {this.state.suggestions ? <ListGroup style={{ zIndex: '2', position: 'absolute', height: '200px', overflow: 'auto', marginBottom: '2%', width: this.state.width * 0.98 }}>

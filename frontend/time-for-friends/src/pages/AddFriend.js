@@ -41,17 +41,17 @@ class AddFriend extends Component {
 
     validateForm(event) {
         event.preventDefault();
-        this.setState({
+        this.setState((prevState) => {return{...prevState,
             formError: {
                 firstNameError: this.state.formData.firstName.length === 0 ? true : false,
                 lastNameError: this.state.formData.lastName.length === 0 ? true : false,
                 phoneNumberError: this.state.formData.phoneNumber.length === 0 ? true : false,
-                emailError: this.state.formData.email.length === 0 || !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.formData.email) ? true : false,
+                emailError: this.state.formData.email.length === 0 || !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.state.formData.email) ? true : false,
                 cityError: this.state.formData.city.length === 0 ? true : false,
                 countryError: this.state.formData.country.length === 0 ? true : false,
                 timeZoneError: this.state.formData.timeZone.length === 0 ? true : false
             }
-        }, async () => {
+        }}, async () => {
             if (Object.values(this.state.formError).indexOf(true) < 0) {
                 let city = new City({ name: this.state.formData.city });
                 await city.save();
@@ -76,7 +76,7 @@ class AddFriend extends Component {
     }
 
     resetFormData = () => {
-        this.setState({
+        this.setState((prevState) => {return{...prevState,
             formData: {
                 firstName: '',
                 lastName: '',
@@ -86,11 +86,11 @@ class AddFriend extends Component {
                 country: '',
                 timeZone: ''
             },
-        })
+        }})
     }
 
     toggleErrorModal = () => {
-        this.setState(prevState => ({ modalToggle: !prevState.modalToggle }));
+        this.setState((prevState) => {return{...prevState, modalToggle: !prevState.modalToggle }});
     }
 
     async handleInputChange(event,value,name){
@@ -160,6 +160,7 @@ class AddFriend extends Component {
                                 name="city"
                                 placeholder="e.g. Tomelilla"
                                 updateValue={this.handleInputChange.bind(this)}
+                                value={this.state.formData.city}
                                 invalid={this.state.formError.cityError}
                                 suggestOn="city"
                             />
@@ -167,6 +168,7 @@ class AddFriend extends Component {
                                 labelText="Country"
                                 name="country"
                                 updateValue={this.handleInputChange.bind(this)}
+                                value={this.state.formData.country}
                                 invalid={this.state.formError.countryError}
                                 placeholder="e.g. Sweden"
                                 suggestOn="country"
