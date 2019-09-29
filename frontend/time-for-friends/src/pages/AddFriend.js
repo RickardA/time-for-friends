@@ -3,8 +3,9 @@ import Person from '../entities/Person'
 import City from '../entities/City'
 import Country from '../entities/Country'
 import { Button, Form, FormGroup, Label, Input, Spinner, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { inject,observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import AutoComplete from '../components/AutoComplete';
+import AutoCompleteGroup from '../components/AutoCompleteGroup';
 
 @inject('store')
 @observer
@@ -92,11 +93,14 @@ class AddFriend extends Component {
         this.setState(prevState => ({ modalToggle: !prevState.modalToggle }));
     }
 
-    handleInputChange = (event) => {
-        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-        const name = event.target.name;
-
-        this.setState({ formData: { ...this.state.formData, [name]: value } });
+    async handleInputChange(event,value,name){
+        if (event) {
+            value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+            name = event.target.name;
+        }
+        this.setState((prevState) => {
+            return {...prevState, formData:{...prevState.formData,[name]:value}}
+        });
     }
 
 
@@ -112,7 +116,7 @@ class AddFriend extends Component {
                                 type="text"
                                 name="firstName"
                                 value={this.state.formData.firstName}
-                                onChange={this.handleInputChange}
+                                onChange={this.handleInputChange.bind(this)}
                                 invalid={this.state.formError.firstNameError}
                                 id="firstName"
                                 placeholder="e.g. Nisse" />
@@ -123,7 +127,7 @@ class AddFriend extends Component {
                                 type="text"
                                 name="lastName"
                                 value={this.state.formData.lastName}
-                                onChange={this.handleInputChange}
+                                onChange={this.handleInputChange.bind(this)}
                                 invalid={this.state.formError.lastNameError}
                                 id="lastName"
                                 placeholder="e.g. Nissesson" />
@@ -134,7 +138,7 @@ class AddFriend extends Component {
                                 type="tel"
                                 name="phoneNumber"
                                 value={this.state.formData.phoneNumber}
-                                onChange={this.handleInputChange}
+                                onChange={this.handleInputChange.bind(this)}
                                 invalid={this.state.formError.phoneNumberError}
                                 id="phoneNumber"
                                 placeholder="e.g. +467612345678" />
@@ -145,38 +149,40 @@ class AddFriend extends Component {
                                 type="email"
                                 name="email"
                                 value={this.state.formData.email}
-                                onChange={this.handleInputChange}
+                                onChange={this.handleInputChange.bind(this)}
                                 invalid={this.state.formError.emailError}
                                 id="email"
                                 placeholder="e.g. nisse.nissesson@nisse.com" />
                         </FormGroup>
-                        <FormGroup>
-                            <Label for="city">City</Label>
-                            <Input
-                                type="text"
+                        <AutoCompleteGroup >
+                            <AutoComplete
+                                labelText="City"
                                 name="city"
-                                value={this.state.formData.city}
-                                onChange={this.handleInputChange}
+                                placeholder="e.g. Tomelilla"
+                                updateValue={this.handleInputChange.bind(this)}
                                 invalid={this.state.formError.cityError}
-                                id="city" placeholder="e.g. Tomelilla" />
-                        </FormGroup>
-                        <AutoComplete 
-                        labelText="Country" 
-                        name="country"
-                        placeholder="e.g. Sweden"
-                        suggestOn="country"
-                        />
+                                suggestOn="city"
+                            />
+                            <AutoComplete
+                                labelText="Country"
+                                name="country"
+                                updateValue={this.handleInputChange.bind(this)}
+                                invalid={this.state.formError.countryError}
+                                placeholder="e.g. Sweden"
+                                suggestOn="country"
+                            />
+                        </AutoCompleteGroup>
                         <FormGroup>
                             <Label for="timeZone">TimeZone</Label>
                             <Input
                                 type="select"
                                 name="timeZone"
                                 value={this.state.formData.timeZone}
-                                onChange={this.handleInputChange}
+                                onChange={this.handleInputChange.bind(this)}
                                 invalid={this.state.formError.timeZoneError}
                                 id="timeZone"
                                 multiple={false}
-                                >
+                            >
                                 <option value="">Choose a timezone</option>
                                 {this.props.store.timezones.map(obj => <option key={obj._id} value={obj._id}>{obj.offset}</option>)}
                             </Input>
