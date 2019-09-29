@@ -1,9 +1,13 @@
-- Fixa felhantering ifall databasen ligger nere
-- Lägg till regex validering i "add friend" formulär
-- Lägg till Here Maps API Autocomplete i "add friend" formulär på land/stad
-- Lägg till så tidzon sätts utifrån vilket/vilken land/stad som matas in
-- Lägg till så varje vän får en egen världskarta i sitt "FriendCard" där plats markeras
-- Fixa så url ändras vid sökning mm och kontrollera vid refresh och ladda in det som behövs
+Frontend:
+- Fixa alla set state så de utnytjar previousState []
+- Lägg till så varje vän får en egen världskarta i sitt "FriendCard" där plats markeras []
+- Fixa så url ändras vid sökning mm och kontrollera vid refresh och ladda in det som behövs []
+- Snygga till design, testa olika webbläsare []
+
+Backend:
+- Fixa felhantering ifall databasen ligger nere []
 - Fixa mocdata scriptet []
-- Snygga till design
+
+Extra:
+- Lägg till så tidzon sätts utifrån vilket/vilken land/stad som matas in []
 
