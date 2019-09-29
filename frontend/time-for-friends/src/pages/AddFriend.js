@@ -97,7 +97,6 @@ class AddFriend extends Component {
         const name = event.target.name;
 
         this.setState({ formData: { ...this.state.formData, [name]: value } });
-        this.getSuggestion();
     }
 
 
@@ -165,6 +164,7 @@ class AddFriend extends Component {
                         labelText="Country" 
                         name="country"
                         placeholder="e.g. Sweden"
+                        suggestOn="country"
                         />
                         <FormGroup>
                             <Label for="timeZone">TimeZone</Label>
