@@ -34,8 +34,6 @@ export default class AutoComplete extends Component {
         const eventValue = event.target.value;
         const eventType = event.type;
 
-        console.log("asd", eventValue);
-
         if (this.props.updateValue) {
             this.props.updateValue(null, eventValue, eventName);
         }

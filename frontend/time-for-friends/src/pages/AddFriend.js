@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Person from '../entities/Person'
-import City from '../entities/City'
-import Country from '../entities/Country'
+import Address from '../entities/Address'
 import { Button, Form, FormGroup, Label, Input, Spinner, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { inject, observer } from 'mobx-react';
 import AutoComplete from '../components/AutoComplete';
@@ -53,17 +52,17 @@ class AddFriend extends Component {
             }
         }}, async () => {
             if (Object.values(this.state.formError).indexOf(true) < 0) {
-                let city = new City({ name: this.state.formData.city });
-                await city.save();
-                let country = new Country({ name: this.state.formData.country });
-                await country.save();
+                let address = new Address({ 
+                    city: this.state.formData.city,
+                    country: this.state.formData.country  
+                });
+                await address.save();
                 let person = new Person({
                     firstName: this.state.formData.firstName,
                     lastName: this.state.formData.lastName,
                     phoneNumber: this.state.formData.phoneNumber,
                     email: this.state.formData.email,
-                    city: city._id,
-                    country: country._id,
+                    address: address._id,
                     timezone: this.state.formData.timeZone
                 })
                 if (await person.save()) {
