@@ -7,8 +7,7 @@ let personSchema = new Schema({
     lastName: {type: String, required: true},
     phoneNumber: {type: String, required: true},
     email: {type: String, required: true},
-    city: { type: ObjectId, ref: 'City', required: true},
-    country: { type: ObjectId, ref: 'Country', required: true },
+    address: { type: ObjectId, ref: 'Address', required: true},
     timezone: { type: ObjectId, ref: 'Timezone', required: true },
 });
 

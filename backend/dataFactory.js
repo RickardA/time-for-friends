@@ -41,32 +41,52 @@ function loadCountries() {
 
 }
 
-function loadCities() {
-    let City = require('./entities/City');
+async function createAdresses() {
+    let Address = require('./entities/Address');
+    let addressAttributes = ['cities', 'countries']
+    let attributeValues = {
+        cities: [],
+        countries: []
+    }
     try {
 
-        console.log(`${consoleColors.yellow}Clearing city collection...${consoleColors.white}`);
-        City.collection.deleteMany({});
-        console.log(`${consoleColors.green}City collection cleared${consoleColors.white}`);
+        console.log(`${consoleColors.yellow}Clearing addresses collection...${consoleColors.white}`);
+        Address.collection.deleteMany({});
+        console.log(`${consoleColors.green}Addresses collection cleared${consoleColors.white}`);
 
-        let input = fs.createReadStream('./data/towns.txt');
+        for (attribute of addressAttributes) {
 
-        let readLine = require('readline').createInterface({
-            input: input,
-            terminal: false
-        });
+            let input = fs.createReadStream(`./data/${attribute}.txt`);
 
-        console.log(`${consoleColors.yellow}Loading cities from file${consoleColors.white}`);
-        readLine.on('line', (line => {
-            let cityName = line;
-            let tempCity = new City({
-                name: cityName
+            let readLine = require('readline').createInterface({
+                input: input,
+                terminal: false
+            });
+
+            console.log(`${consoleColors.yellow}Loading ${attribute} from file${consoleColors.white}`);
+            await new Promise((resolve) => {
+                readLine.on('line', (line => {
+                    resolve(line);
+                    attributeValues[attribute].push(line);
+
+                }));
+            });
+            console.log(`${consoleColors.green}All ${attribute} loaded!${consoleColors.white}`);
+        }
+            console.log(`${consoleColors.green}All addressAttributes loaded!${consoleColors.white}`);
+
+        for(let i = 0;i < 30; i++){
+            let tempAddress = new Address({
+                city: attributeValues.cities[Math.floor(Math.random() * attributeValues.cities.length)],
+                country: attributeValues.countries[Math.floor(Math.random() * attributeValues.countries.length)]
             })
-            tempCity.save();
-        }));
-        console.log(`${consoleColors.green}All cities saved!${consoleColors.white}`);
+            tempAddress.save();
+        }
+
+        console.log(`${consoleColors.green}Addresses pushed into DB!${consoleColors.white}`);
+
     } catch (err) {
-        console.log(`${consoleColors.red}An error occured in loadCities: ${err}${consoleColors.white}`);
+        console.log(`${consoleColors.red}An error occured in createAddresses: ${err}${consoleColors.white}`);
     }
 
 }
@@ -74,8 +94,7 @@ function loadCities() {
 async function createFakeData() {
 
     let data = {
-        City: [{}],
-        Country: [{}],
+        Address: [{}],
         Timezone: [{}],
         emails: [],
         phonenumbers: [],
@@ -116,25 +135,12 @@ async function createFakeData() {
                 lastName: data['persons'][Math.floor(Math.random() * 29)].split(" ")[1],
                 phoneNumber: data['phonenumbers'][Math.floor(Math.random() * 29)],
                 email: data['emails'][Math.floor(Math.random() * 29)],
-                city: data['City'][Math.floor(Math.random() * 29)]._id,
-                country: data['Country'][Math.floor(Math.random() * 29)]._id,
+                address: data['Address'][Math.floor(Math.random() * 29)]._id,
                 timezone: data['Timezone'][Math.floor(Math.random() * 500)]._id
             })
             tempPerson.save();
         }
     })
-
-
-
-
-
-
-
-
-
-    /* const Model = mongoose.model('City');
-    const result = await Model.find({}, null, {});
-    console.log(result); */
 
 }
 
@@ -169,7 +175,7 @@ function loadTimeZones() {
 
 module.exports.loadCountries = loadCountries;
 module.exports.loadTimeZones = loadTimeZones;
-module.exports.loadCities = loadCities;
+module.exports.createAdresses = createAdresses;
 module.exports.createFakeData = createFakeData;
 
 

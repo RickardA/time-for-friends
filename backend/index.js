@@ -30,14 +30,15 @@ function startWebServer() {
     let dataFactory = require('./dataFactory.js');
     // dataFactory.loadTimeZones();
     //dataFactory.loadCountries();
-    //dataFactory.loadCities();
-    //dataFactory.createFakeData();
+    //dataFactory.createAdresses();
+    dataFactory.createFakeData();
 }
 
 require('./entities/Person');
 require('./entities/City');
 require('./entities/Country');
 require('./entities/Timezone');
+require('./entities/Address');
 
 
 app.use(express.json());
@@ -70,18 +71,10 @@ app.get('/api/Person', async (req, res) => {
             },
             {
                 $lookup: {
-                    from: "countries",
-                    localField: "country",
+                    from: "addresses",
+                    localField: "address",
                     foreignField: "_id",
-                    as: "country"
-                }
-            },
-            {
-                $lookup: {
-                    from: "cities",
-                    localField: "city",
-                    foreignField: "_id",
-                    as: "city"
+                    as: "address"
                 }
             },
             {
@@ -100,8 +93,7 @@ app.get('/api/Person', async (req, res) => {
                         $dateFromString: {dateString: {$dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }}
                         
                     },
-                    city: { $arrayElemAt: ["$city", 0] },
-                    country: { $arrayElemAt: ["$country", 0] },
+                    address: { $arrayElemAt: ["$address", 0] },
                     timezone: { $arrayElemAt: ["$timezone", 0] }
                 }
             },
