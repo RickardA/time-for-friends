@@ -1,5 +1,4 @@
 Frontend:
-- Fixa alla set state så de utnytjar previousState []
 - Lägg till så varje vän får en egen världskarta i sitt "FriendCard" där plats markeras []
 - Fixa så url ändras vid sökning mm och kontrollera vid refresh och ladda in det som behövs []
 - Snygga till design, testa olika webbläsare []
