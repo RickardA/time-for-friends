@@ -6,7 +6,6 @@ import Clock from '../components/Clock'
 
 export default class FriendCard extends Component {
 
-
     render() {
         return (
             <Card style={{margin: '20px 0 0 0'}}>

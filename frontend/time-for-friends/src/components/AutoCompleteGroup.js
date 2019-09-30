@@ -4,7 +4,7 @@ export default class AutoCompleteGroup extends Component {
 
     bindSuggestion(value,name,suggestions){
         if(this.props.onLocationId){
-            this.props.onLocationId('');
+            this.props.onLocationId(null,'','locationId');
         }
         if(name === 'city'){
             const suggestion = suggestions.find(suggestion => {
@@ -13,7 +13,7 @@ export default class AutoCompleteGroup extends Component {
             if (suggestion) {
                 this.refs.country.setInputValue(suggestion.address.country,'country')
                 if(this.props.onLocationId){
-                    this.props.onLocationId(suggestion.locationId);
+                    this.props.onLocationId(null,suggestion.locationId,'locationId');
                 }
             }
         }

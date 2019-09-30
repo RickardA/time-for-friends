@@ -21,7 +21,8 @@ class AddFriend extends Component {
             email: '',
             city: '',
             country: '',
-            timeZone: ''
+            timeZone: '',
+            locationId: ''
         },
         formError: {
             firstNameError: false,
@@ -54,7 +55,8 @@ class AddFriend extends Component {
             if (Object.values(this.state.formError).indexOf(true) < 0) {
                 let address = new Address({ 
                     city: this.state.formData.city,
-                    country: this.state.formData.country  
+                    country: this.state.formData.country,
+                    locationId: this.state.formData.locationId  
                 });
                 await address.save();
                 let person = new Person({
@@ -83,7 +85,8 @@ class AddFriend extends Component {
                 email: '',
                 city: '',
                 country: '',
-                timeZone: ''
+                timeZone: '',
+                locationId: ''
             },
         }})
     }
@@ -153,7 +156,7 @@ class AddFriend extends Component {
                                 id="email"
                                 placeholder="e.g. nisse.nissesson@nisse.com" />
                         </FormGroup>
-                        <AutoCompleteGroup >
+                        <AutoCompleteGroup onLocationId={this.handleInputChange.bind(this)}>
                             <AutoComplete
                                 labelText="City"
                                 name="city"
