@@ -41,23 +41,33 @@ class AddFriend extends Component {
 
     validateForm(event) {
         event.preventDefault();
-        this.setState((prevState) => {return{...prevState,
-            formError: {
-                firstNameError: this.state.formData.firstName.length === 0 ? true : false,
-                lastNameError: this.state.formData.lastName.length === 0 ? true : false,
-                phoneNumberError: this.state.formData.phoneNumber.length === 0 ? true : false,
-                emailError: this.state.formData.email.length === 0 || !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.state.formData.email) ? true : false,
-                cityError: this.state.formData.city.length === 0 ? true : false,
-                countryError: this.state.formData.country.length === 0 ? true : false,
-                timeZoneError: this.state.formData.timeZone.length === 0 ? true : false
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                formError: {
+                    firstNameError: this.state.formData.firstName.length === 0 ? true : false,
+                    lastNameError: this.state.formData.lastName.length === 0 ? true : false,
+                    phoneNumberError: this.state.formData.phoneNumber.length === 0 ? true : false,
+                    emailError: this.state.formData.email.length === 0 || !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.state.formData.email) ? true : false,
+                    cityError: this.state.formData.city.length === 0 ? true : false,
+                    countryError: this.state.formData.country.length === 0 ? true : false,
+                    timeZoneError: this.state.formData.timeZone.length === 0 ? true : false
+                }
             }
-        }}, async () => {
+        }, async () => {
             if (Object.values(this.state.formError).indexOf(true) < 0) {
-                let address = new Address({ 
+                let position = null;
+                if(this.state.formData.locationId !== ''){
+                    position = await this.getCoordinates(this.state.formData.locationId);
+                }
+                let address = new Address({
                     city: this.state.formData.city,
                     country: this.state.formData.country,
-                    locationId: this.state.formData.locationId  
+                    locationId: this.state.formData.locationId,
+                    long: position ? position.Longitude: null,
+                    lat: position ? position.Latitude : null
                 });
+                console.log(address)
                 await address.save();
                 let person = new Person({
                     firstName: this.state.formData.firstName,
@@ -76,32 +86,47 @@ class AddFriend extends Component {
         })
     }
 
+    async getCoordinates(locationId) {
+        let result = await fetch(`http://geocoder.api.here.com/6.2/geocode.json?locationid=${locationId}&app_id=RaCeBN6d2qKOWzRWcBZu&app_code=_BOiSdF63exs1SfJ1tqmYg&gen=8`, {
+            method: 'GET',
+        })
+        result = await result.json();
+        if(result){
+            return result.Response.View[0].Result[0].Location.DisplayPosition
+        }else{
+            return null
+        }
+    }
+
     resetFormData = () => {
-        this.setState((prevState) => {return{...prevState,
-            formData: {
-                firstName: '',
-                lastName: '',
-                phoneNumber: '',
-                email: '',
-                city: '',
-                country: '',
-                timeZone: '',
-                locationId: ''
-            },
-        }})
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                formData: {
+                    firstName: '',
+                    lastName: '',
+                    phoneNumber: '',
+                    email: '',
+                    city: '',
+                    country: '',
+                    timeZone: '',
+                    locationId: ''
+                },
+            }
+        })
     }
 
     toggleErrorModal = () => {
-        this.setState((prevState) => {return{...prevState, modalToggle: !prevState.modalToggle }});
+        this.setState((prevState) => { return { ...prevState, modalToggle: !prevState.modalToggle } });
     }
 
-    async handleInputChange(event,value,name){
+    async handleInputChange(event, value, name) {
         if (event) {
             value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
             name = event.target.name;
         }
         this.setState((prevState) => {
-            return {...prevState, formData:{...prevState.formData,[name]:value}}
+            return { ...prevState, formData: { ...prevState.formData, [name]: value } }
         });
     }
 
