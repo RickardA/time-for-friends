@@ -1,44 +1,70 @@
 import React, { Component } from 'react';
-import { Collapse, Navbar, NavbarToggler, Nav, NavItem } from 'reactstrap';
+import { Collapse, Navbar, NavbarBrand, NavbarToggler, Nav, NavItem } from 'reactstrap';
 import { Link } from "react-router-dom";
 
 export default class NavigationBar extends Component {
-  constructor(props) {
-    super(props);
 
-    this.toggleNavbar = this.toggleNavbar.bind(this);
-    this.state = {
-      collapsed: true
-    };
+  state = {
+    isOpen: false,
+    desktop: true,
+    title: 'Time For Friends',
+    links: {
+      home: {
+        to: '/',
+        text: 'Home'
+      },
+      addFriend: {
+        to: '/addFriend',
+        text: 'Add Friend'
+      },
+      myFriends: {
+        to: '/myFriends',
+        text: 'My Friends'
+      }
+    }
+  };
+
+  componentDidMount() {
+    document.addEventListener('click', this.clickListener.bind(this), false);
   }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.clickListener.bind(this), false);
+  }
+
+  clickListener(event) {
+    if (!event.target.getAttribute('class') || !event.target.getAttribute('class').includes('navbar') || event.target.getAttribute('class').includes('navLink')) {
+      if (this.state.isOpen) {
+        this.toggleNavbar();
+      }
+    }
+  }
+
 
   toggleNavbar() {
     this.setState((prevState) => {
-      return { ...prevState, collapsed: !this.state.collapsed }
+      return { ...prevState, isOpen: !this.state.isOpen }
     });
   }
 
   render() {
     return (
-      <Navbar color="dark" className="sticky-top" light>
-        <Link to="/" className="text-white" style={{ textDecoration: 'none', fontSize: '20px' }}>Time For Friends</Link>
-        <NavbarToggler onClick={this.toggleNavbar} className="mr-2 " style={{ backgroundColor: 'white' }} />
-        <Collapse isOpen={!this.state.collapsed} navbar>
-          <Nav navbar>
-            <NavItem>
-              <Link to="/" onClick={this.toggleNavbar} className="text-white">Home</Link>
-            </NavItem>
-            <NavItem>
-              <Link to="/addFriend" onClick={this.toggleNavbar} className="text-white">Add Friend</Link>
-            </NavItem>
-            <NavItem>
-              <Link to="/myFriends" onClick={this.toggleNavbar} className="text-white">My Friends</Link>
-            </NavItem>
-          </Nav>
-        </Collapse>
-      </Navbar>
-    );
+      <div>
+        <Navbar color="dark" className="navbar" light expand="md">
+          <Link to={this.state.links.home.to} className="text-white" style={{ textDecoration: 'none', fontSize: '20px' }}>{this.state.title}</Link>
+          <NavbarToggler style={{ backgroundColor: 'white' }} onClick={this.toggleNavbar.bind(this)} />
+          <Collapse isOpen={this.state.isOpen} navbar>
+            <Nav className="ml-auto" navbar>
+              {Object.values(this.state.links).map(link =>
+                <NavItem key={link.to}>
+                  <Link className="text-white pr-md-2 pl-md-2 navLink" style={{ textDecoration: 'none' }} key={link.to} to={link.to}>{link.text}</Link>
+                </NavItem>
+              )}
+            </Nav>
+          </Collapse>
+        </Navbar>
+      </div>
+    )
   }
-
 }
 
