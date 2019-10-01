@@ -96,7 +96,6 @@ class AutoComplete extends Component {
     }
 
     clickListener(event) {
-        console.log(event)
         if (event.type === 'click' || (event.type === 'keydown' && event.keyCode === 9)) {
             if (!event.target.getAttribute('class') || !event.target.getAttribute('class').includes('suggestionItem')) {
                 this.setState((prevState) => {
