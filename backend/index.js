@@ -31,7 +31,7 @@ function startWebServer() {
     // dataFactory.loadTimeZones();
     //dataFactory.loadCountries();
     //dataFactory.createAdresses();
-    dataFactory.createFakeData();
+    //dataFactory.createFakeData();
 }
 
 require('./entities/Person');
