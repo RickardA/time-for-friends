@@ -54,7 +54,7 @@ class AutoComplete extends Component {
             this.setState((prevState) => {
                 return {
                     ...prevState,
-                    suggestions: result.suggestions.filter(suggestion => suggestion.matchLevel === this.props.suggestOn)
+                    suggestions: result.suggestions.filter(suggestion => suggestion.matchLevel.toLowerCase() === this.props.suggestOn.toLowerCase())
                 }
             }, () => {
                 if (eventType !== 'click') {
