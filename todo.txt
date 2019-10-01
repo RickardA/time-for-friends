@@ -1,5 +1,7 @@
 Frontend:
-- Lägg till så varje vän får en egen världskarta i sitt "FriendCard" där plats markeras []
+- Ändra navbar till vanlig på desktop och mobil(vid footer) i mobilläge []
+- Reset search resettar inte timezone dropdown []
+- Om man modifierar land och sen återgår så måste vi kontrollera att man valt ett giltigt och plocka location []
 - Fixa så url ändras vid sökning mm och kontrollera vid refresh och ladda in det som behövs []
 - Snygga till design, testa olika webbläsare []
 
