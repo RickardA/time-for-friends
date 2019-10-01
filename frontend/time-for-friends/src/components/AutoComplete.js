@@ -101,6 +101,10 @@ export default class AutoComplete extends Component {
         }
     }
 
+    getInputValue(){
+        return this.props.value.toLowerCase()
+    }
+
     render() {
         return (
             <FormGroup>

@@ -57,7 +57,7 @@ class AddFriend extends Component {
         }, async () => {
             if (Object.values(this.state.formError).indexOf(true) < 0) {
                 let position = null;
-                if(this.state.formData.locationId !== ''){
+                if(this.state.formData.locationId !== '' || this.state.formData.locationId !== undefined){
                     position = await this.getCoordinates(this.state.formData.locationId);
                 }
                 let address = new Address({
@@ -67,7 +67,6 @@ class AddFriend extends Component {
                     long: position ? position.Longitude: null,
                     lat: position ? position.Latitude : null
                 });
-                console.log(address)
                 await address.save();
                 let person = new Person({
                     firstName: this.state.formData.firstName,
