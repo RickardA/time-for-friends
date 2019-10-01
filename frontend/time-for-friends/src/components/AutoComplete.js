@@ -24,16 +24,18 @@ class AutoComplete extends Component {
             }
         });
         document.addEventListener('click', this.clickListener.bind(this), false);
+        document.addEventListener('keydown', this.clickListener.bind(this), false);
     }
 
     componentWillUnmount() {
         document.removeEventListener('click', this.clickListener.bind(this), false);
+        document.removeEventListener('keydown', this.clickListener.bind(this), false);
     }
 
-    firstUpper(text){
-        if(/^[a-z A-z åäö ÅÄÖ]/.test(text)){
-            return text.replace(/^[a-z A-z åäö ÅÄÖ]/,text.charAt(0).toUpperCase());
-        }else{
+    firstUpper(text) {
+        if (/^[a-z A-z åäö ÅÄÖ]/.test(text)) {
+            return text.replace(/^[a-z A-z åäö ÅÄÖ]/, text.charAt(0).toUpperCase());
+        } else {
             return text;
         }
     }
@@ -94,13 +96,16 @@ class AutoComplete extends Component {
     }
 
     clickListener(event) {
-        if (!event.target.getAttribute('class') || !event.target.getAttribute('class').includes('suggestionItem')) {
-            this.setState((prevState) => {
-                return {
-                    ...prevState,
-                    suggestions: ''
-                }
-            })
+        console.log(event)
+        if (event.type === 'click' || (event.type === 'keydown' && event.keyCode === 9)) {
+            if (!event.target.getAttribute('class') || !event.target.getAttribute('class').includes('suggestionItem')) {
+                this.setState((prevState) => {
+                    return {
+                        ...prevState,
+                        suggestions: ''
+                    }
+                })
+            }
         }
     }
 
@@ -110,7 +115,7 @@ class AutoComplete extends Component {
         }
     }
 
-    getInputValue(){
+    getInputValue() {
         return this.props.value.toLowerCase();
     }
 
