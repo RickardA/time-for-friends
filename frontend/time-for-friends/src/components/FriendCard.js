@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import {Card,CardBody } from 'reactstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import Clock from '../components/Clock'
+import Map from '../components/Map'
 
 
 export default class FriendCard extends Component {
 
     render() {
-        return (
+        return ( 
             <Card style={{margin: '20px 0 0 0'}}>
+                <Map mapId={this.props.person._id} height="150px" lat={this.props.person.address.lat} long={this.props.person.address.long} zoom="11"/>
                 <CardBody>
                     <p><FontAwesomeIcon icon='signature' /> {this.props.person.firstName} {this.props.person.lastName}</p>
                     <p><FontAwesomeIcon icon='phone' /> {this.props.person.phoneNumber}</p>
