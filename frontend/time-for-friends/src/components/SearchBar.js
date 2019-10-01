@@ -122,7 +122,7 @@ class SearchBar extends Component {
                             <Input
                                 type="select"
                                 name="timezone"
-                                value={this.props.store.timezone}
+                                value={this.state.timezone}
                                 onChange={this.performSearch.bind(this)}
                                 id="timeZone"
                                 multiple={false}
