@@ -57,7 +57,7 @@ class AddFriend extends Component {
         }, async () => {
             if (Object.values(this.state.formError).indexOf(true) < 0) {
                 let position = null;
-                if(this.state.formData.locationId !== '' || this.state.formData.locationId !== undefined){
+                if(this.state.formData.locationId !== '' && this.state.formData.locationId !== undefined){
                     position = await this.getCoordinates(this.state.formData.locationId);
                 }
                 let address = new Address({
@@ -91,7 +91,11 @@ class AddFriend extends Component {
         })
         result = await result.json();
         if(result){
-            return result.Response.View[0].Result[0].Location.DisplayPosition
+            try{
+                return result.Response.View[0].Result[0].Location.DisplayPosition
+            }catch(err){
+                return null;
+            }
         }else{
             return null
         }

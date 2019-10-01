@@ -23,11 +23,11 @@ class AutoComplete extends Component {
                 width: DOMNode.clientWidth
             }
         });
-        document.addEventListener('mousedown', this.clickListener.bind(this), false);
+        document.addEventListener('click', this.clickListener.bind(this), false);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this.clickListener.bind(this), false);
+        document.removeEventListener('click', this.clickListener.bind(this), false);
     }
 
     firstUpper(text){
