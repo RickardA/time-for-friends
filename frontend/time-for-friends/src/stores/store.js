@@ -26,6 +26,15 @@ export default class Store{
         }
     }
 
+    @action
+    firstUpper(text){
+        if(/^[a-z A-z åäö ÅÄÖ]/.test(text)){
+            return text.replace(/^[a-z A-z åäö ÅÄÖ]/,text.charAt(0).toUpperCase());
+        }else{
+            return text;
+        }
+    }
+
     //----------::----------//
 
     //Others

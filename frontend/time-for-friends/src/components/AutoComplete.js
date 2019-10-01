@@ -5,9 +5,10 @@ import {
     Input,
     ListGroup, ListGroupItem
 } from 'reactstrap';
+import { inject } from 'mobx-react';
 
-
-export default class AutoComplete extends Component {
+@inject('store')
+class AutoComplete extends Component {
 
     state = {
         width: 0,
@@ -29,13 +30,21 @@ export default class AutoComplete extends Component {
         document.removeEventListener('mousedown', this.clickListener.bind(this), false);
     }
 
+    firstUpper(text){
+        if(/^[a-z A-z åäö ÅÄÖ]/.test(text)){
+            return text.replace(/^[a-z A-z åäö ÅÄÖ]/,text.charAt(0).toUpperCase());
+        }else{
+            return text;
+        }
+    }
+
     async getSuggestions(event) {
         const eventName = event.target.name;
         const eventValue = event.target.value;
         const eventType = event.type;
 
         if (this.props.updateValue) {
-            this.props.updateValue(null, eventValue, eventName);
+            this.props.updateValue(null, this.firstUpper(eventValue), eventName);
         }
         let result = await fetch(`http://autocomplete.geocoder.api.here.com/6.2/suggest.json?app_id=RaCeBN6d2qKOWzRWcBZu&app_code=_BOiSdF63exs1SfJ1tqmYg&language=en&query=${event.target.value}`, {
             method: 'GET',
@@ -102,7 +111,7 @@ export default class AutoComplete extends Component {
     }
 
     getInputValue(){
-        return this.props.value.toLowerCase()
+        return this.props.value.toLowerCase();
     }
 
     render() {
@@ -129,4 +138,4 @@ export default class AutoComplete extends Component {
     }
 }
 
-
+export default AutoComplete;

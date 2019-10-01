@@ -121,7 +121,7 @@ class AddFriend extends Component {
 
     async handleInputChange(event, value, name) {
         if (event) {
-            value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+            value = event.target.type === 'checkbox' ? event.target.checked : this.props.store.firstUpper(event.target.value);
             name = event.target.name;
         }
         this.setState((prevState) => {
