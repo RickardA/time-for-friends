@@ -26,9 +26,6 @@ db.once('open', () => {
 function startWebServer() {
     const port = 5000;
     app.listen(port, () => console.log(`${consoleColors.green}Listening on port: ${port}${consoleColors.white}`));
-
-    let dataFactory = require('./dataFactory.js');
-    dataFactory.createFakeData();
 }
 
 require('./entities/Person');
@@ -40,6 +37,20 @@ require('./entities/Address');
 
 app.use(express.json());
 app.use(express.static('www'));
+
+app.get('/api/mockdata/:key',async (req, res) => {
+    if (req.params.key === '7249823412') {
+        let dataFactory = require('./dataFactory.js');
+        let result = await dataFactory.createFakeData();
+        if(result){
+            res.status(201).json({message:'Mockdata created!'})
+        }else{
+            res.status(500).json({message:'Something went wrong trying to create mockdata!'})
+        }
+    } else {
+        res.status(401).json({ error: 'You cant do that!' })
+    }
+})
 
 app.post('/api/:entity', async (req, res) => {
     try {
@@ -78,17 +89,23 @@ app.get('/api/Person', async (req, res) => {
                 $addFields:
                 {
                     actualTime: {
-                        $sum: [{$multiply: [{$convert: {
-                            input: { $dateToString: { format: "%H", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
-                            , to: 'int'
-                        }},60]},{$convert: {
-                            input: { $dateToString: { format: "%M", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
-                            , to: 'int'
-                        }}]
+                        $sum: [{
+                            $multiply: [{
+                                $convert: {
+                                    input: { $dateToString: { format: "%H", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
+                                    , to: 'int'
+                                }
+                            }, 60]
+                        }, {
+                            $convert: {
+                                input: { $dateToString: { format: "%M", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }
+                                , to: 'int'
+                            }
+                        }]
                     },
                     date: {
-                        $dateFromString: {dateString: {$dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } }}
-                        
+                        $dateFromString: { dateString: { $dateToString: { format: "%Y-%m-%dT%H:%M:%S", date: "$$NOW", timezone: { $arrayElemAt: ["$timezone.offset", 0] } } } }
+
                     },
                     address: { $arrayElemAt: ["$address", 0] },
                     timezone: { $arrayElemAt: ["$timezone", 0] }

@@ -185,11 +185,14 @@ async function createFakeData() {
                 }
             })
             console.log(`${consoleColors.green}Persons created and pushed into DB!${consoleColors.white}`);
+            return true;
         } catch (err) {
             console.log(`${consoleColors.red}An error occured in createFakeData: ${err}${consoleColors.white}`);
+            return false;
         }
     } else {
         console.log(`${consoleColors.red}Something went wrong while trying to create mocdata, aborting....${consoleColors.white}`);
+        return false;
     }
 }
 
