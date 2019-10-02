@@ -1,6 +1,7 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
 const fetch = require('node-fetch');
+const { once } = require('events');
 
 let consoleColors = {
     red: "\u001b[1;31m",
@@ -12,38 +13,8 @@ let consoleColors = {
     white: "\u001b[1;37m",
 }
 
-function loadCountries() {
-    let Country = require('./entities/Country');
-    try {
-
-        console.log(`${consoleColors.yellow}Clearing country collection...${consoleColors.white}`);
-        Country.collection.deleteMany({});
-        console.log(`${consoleColors.green}Country collection cleared${consoleColors.white}`);
-
-        let input = fs.createReadStream('./data/countries.txt');
-
-        let readLine = require('readline').createInterface({
-            input: input,
-            terminal: false
-        });
-
-        console.log(`${consoleColors.yellow}Loading countries from file${consoleColors.white}`);
-        readLine.on('line', (line => {
-            let countryName = line;
-            let tempCountry = new Country({
-                name: countryName
-            })
-            tempCountry.save();
-        }));
-        console.log(`${consoleColors.green}All countries saved!${consoleColors.white}`);
-    } catch (err) {
-        console.log(`${consoleColors.red}An error occured in loadCountries: ${err}${consoleColors.white}`);
-    }
-
-}
-
 async function loadCities() {
-    let loadedCities = [{}];
+    let loadedCities = [];
     try {
         let input = fs.createReadStream('./data/cities.txt');
 
@@ -53,24 +24,31 @@ async function loadCities() {
         });
 
         console.log(`${consoleColors.yellow}Loading cities from file${consoleColors.white}`);
-        for await (const cityName of readLine) {
-            let suggestions = await getCity(cityName);
-            if (suggestions) {
-                const rightSuggestion = suggestions.filter((suggestion) => {
-                    return suggestion.matchLevel.toLowerCase() === 'city'
-                })
-                if (rightSuggestion && rightSuggestion[0]) {
-                    let position = await getLocation(rightSuggestion[0].locationId);
-                    loadedCities.push({
-                        city: rightSuggestion[0].address.city,
-                        country: rightSuggestion[0].country,
-                        locationId: rightSuggestion[0].locationId,
-                        lat: position ? position.Latitude : 0,
-                        long: position ? position.Longitude : 0
-                    })
+        const promises = [];
+        readLine.on('line', cityName => {
+            promises.push(new Promise(async (resolve) => {
+                let suggestions = await getCity(cityName);
+                if (suggestions) {
+                    const rightSuggestion = suggestions.filter((suggestion) => {
+                        return suggestion.matchLevel.toLowerCase() === 'city'
+                    });
+                    if (rightSuggestion && rightSuggestion[0]) {
+                        let position = await getLocation(rightSuggestion[0].locationId);
+                        loadedCities.push({
+                            city: rightSuggestion[0].address.city,
+                            country: rightSuggestion[0].address.country,
+                            locationId: rightSuggestion[0].locationId,
+                            lat: position ? position.Latitude : null,
+                            long: position ? position.Longitude : null
+                        });
+                    }
                 }
-            }
-        }
+                resolve(cityName);
+            }));
+
+        });
+        await once(readLine, 'close');
+        await Promise.all(promises);
         console.log(`${consoleColors.green}${loadedCities.length} cities was loaded!${consoleColors.white}`);
         return loadedCities;
     } catch (err) {
@@ -88,7 +66,7 @@ async function getCity(cityName) {
         })
         result = await result.json();
         if (result && result.suggestions) {
-            console.log(`${consoleColors.green}Got city information for: ${cityName}${consoleColors.white}`);
+            //console.log(`${consoleColors.green}Got city information for: ${cityName}${consoleColors.white}`);
             return result.suggestions;
         }
     } catch (err) {
@@ -105,7 +83,7 @@ async function getLocation(locationId) {
         })
         result = await result.json();
         if (result) {
-            console.log(`${consoleColors.green}Got location for locationId:${locationId}${consoleColors.white}`);
+            //console.log(`${consoleColors.green}Got location for locationId:${locationId}${consoleColors.white}`);
             return result.Response.View[0].Result[0].Location.DisplayPosition;
         }
     }
@@ -116,112 +94,108 @@ async function getLocation(locationId) {
 }
 
 async function createAdresses() {
+    let cities = await loadCities();
     let Address = require('./entities/Address');
-    let addressAttributes = ['cities', 'countries']
-    let attributeValues = {
-        cities: [],
-        countries: []
-    }
-    try {
+    if (cities) {
+        try {
 
-        console.log(`${consoleColors.yellow}Clearing addresses collection...${consoleColors.white}`);
-        Address.collection.deleteMany({});
-        console.log(`${consoleColors.green}Addresses collection cleared${consoleColors.white}`);
+            console.log(`${consoleColors.yellow}Clearing addresses collection...${consoleColors.white}`);
+            Address.collection.deleteMany({});
+            console.log(`${consoleColors.green}Addresses collection cleared${consoleColors.white}`);
 
-        for (attribute of addressAttributes) {
-
-            let input = fs.createReadStream(`./data/${attribute}.txt`);
-
-            let readLine = require('readline').createInterface({
-                input: input,
-                terminal: false
-            });
-
-            console.log(`${consoleColors.yellow}Loading ${attribute} from file${consoleColors.white}`);
-            await new Promise((resolve) => {
-                readLine.on('line', (line => {
-                    resolve(line);
-                    attributeValues[attribute].push(line);
-
-                }));
-            });
-            console.log(`${consoleColors.green}All ${attribute} loaded!${consoleColors.white}`);
+            let addressCounter = 0;
+            for (city of cities) {
+                addressCounter += 1;
+                let tempAddress = new Address({
+                    city: city.city,
+                    country: city.country,
+                    locationId: city.locationId,
+                    long: city.long,
+                    lat: city.lat
+                });
+                await tempAddress.save();
+            }
+            console.log(`${consoleColors.green}${addressCounter} addresses pushed into DB!${consoleColors.white}`);
+            return true;
+        } catch (err) {
+            console.log(`${consoleColors.red}An error occured in createAddresses: ${err}${consoleColors.white}`);
+            return false;
         }
-        console.log(`${consoleColors.green}All addressAttributes loaded!${consoleColors.white}`);
-
-        for (let i = 0; i < 30; i++) {
-            let tempAddress = new Address({
-                city: attributeValues.cities[Math.floor(Math.random() * attributeValues.cities.length)],
-                country: attributeValues.countries[Math.floor(Math.random() * attributeValues.countries.length)]
-            })
-            tempAddress.save();
-        }
-
-        console.log(`${consoleColors.green}Addresses pushed into DB!${consoleColors.white}`);
-
-    } catch (err) {
-        console.log(`${consoleColors.red}An error occured in createAddresses: ${err}${consoleColors.white}`);
+    } else {
+        console.log(`${consoleColors.red}Something went wrong in createAddresses, got no cities :( ${consoleColors.white}`);
+        return false;
     }
-
 }
 
 async function createFakeData() {
 
-    let data = {
-        Address: [{}],
-        Timezone: [{}],
-        emails: [],
-        phonenumbers: [],
-        persons: []
-    }
+    let addressResult = await createAdresses();
+    let timezoneResult = await loadTimeZones();
 
-    let readline;
+    if (addressResult && timezoneResult) {
+        try {
 
+            console.log(`${consoleColors.yellow}Building persons...${consoleColors.white}`);
+            let data = {
+                Address: [],
+                Timezone: [],
+                emails: [],
+                phonenumbers: [],
+                persons: []
+            }
 
-    for (let i = 0; i < Object.keys(data).length; i++) {
-        let key = Object.keys(data)[i];
-        if (!['emails', 'phonenumbers', 'persons'].includes(key)) {
-            const Model = mongoose.model(key);
-            data[key] = await Model.find({}, null, {});
-        } else if (['emails', 'phonenumbers', 'persons'].includes(key)) {
-            let input = fs.createReadStream(`./data/${key}.txt`);
-
-            readLine = require('readline').createInterface({
-                input: input,
-                terminal: false
-            });
-
-            readLine.on('line', (line => {
-                data[key].push(line);
-            }));
+            let readline;
 
 
-        }
-    };
+            for (let i = 0; i < Object.keys(data).length; i++) {
+                let key = Object.keys(data)[i];
+                if (!['emails', 'phonenumbers', 'persons'].includes(key)) {
+                    const Model = mongoose.model(key);
+                    data[key] = await Model.find({}, null, {});
+                } else if (['emails', 'phonenumbers', 'persons'].includes(key)) {
+                    let input = fs.createReadStream(`./data/${key}.txt`);
 
-    readLine.on('close', () => {
-        let Person = require('./entities/Person');
-        Person.collection.deleteMany({});
+                    readLine = require('readline').createInterface({
+                        input: input,
+                        terminal: false
+                    });
 
-        for (let i = 0; i < 30; i++) {
-            let tempPerson = new Person({
-                firstName: data['persons'][Math.floor(Math.random() * 29)].split(" ")[0],
-                lastName: data['persons'][Math.floor(Math.random() * 29)].split(" ")[1],
-                phoneNumber: data['phonenumbers'][Math.floor(Math.random() * 29)],
-                email: data['emails'][Math.floor(Math.random() * 29)],
-                address: data['Address'][Math.floor(Math.random() * 29)]._id,
-                timezone: data['Timezone'][Math.floor(Math.random() * 500)]._id
+                    readLine.on('line', (line => {
+                        data[key].push(line);
+                    }));
+
+
+                }
+            };
+
+            readLine.on('close', async () => {
+                let Person = require('./entities/Person');
+                Person.collection.deleteMany({});
+
+                for (let i = 0; i < 30; i++) {
+                    let tempPerson = new Person({
+                        firstName: data['persons'][Math.floor(Math.random() * data['persons'].length)].split(" ")[0],
+                        lastName: data['persons'][Math.floor(Math.random() * data['persons'].length)].split(" ")[1],
+                        phoneNumber: data['phonenumbers'][Math.floor(Math.random() * data['phonenumbers'].length)],
+                        email: data['emails'][Math.floor(Math.random() * data['emails'].length)],
+                        address: data['Address'][Math.floor(Math.random() * data['Address'].length)]._id,
+                        timezone: data['Timezone'][Math.floor(Math.random() * data['Timezone'].length)]._id
+                    })
+                    await tempPerson.save();
+                }
             })
-            tempPerson.save();
+            console.log(`${consoleColors.green}Persons created and pushed into DB!${consoleColors.white}`);
+        } catch (err) {
+            console.log(`${consoleColors.red}An error occured in createFakeData: ${err}${consoleColors.white}`);
         }
-    })
-
+    } else {
+        console.log(`${consoleColors.red}Something went wrong while trying to create mocdata, aborting....${consoleColors.white}`);
+    }
 }
 
-function loadTimeZones() {
+async function loadTimeZones() {
     let Timezone = require('./entities/Timezone');
     try {
-
         console.log(`${consoleColors.yellow}Clearing Timezone collection...${consoleColors.white}`);
         Timezone.collection.deleteMany({});
         console.log(`${consoleColors.green}Timezone collection cleared${consoleColors.white}`);
@@ -234,23 +208,29 @@ function loadTimeZones() {
         });
 
         console.log(`${consoleColors.yellow}Loading timezones from file${consoleColors.white}`);
+        const promises = [];
         readLine.on('line', (line => {
-            let tempTimezone = new Timezone({
-                offset: line
-            })
-            tempTimezone.save();
+            promises.push(new Promise((resolve) => {
+                let tempTimezone = new Timezone({
+                    offset: line
+                })
+                tempTimezone.save();
+                resolve(line);
+            }));
         }));
+
+        await once(readLine, 'close');
+        await Promise.all(promises);
+
         console.log(`${consoleColors.green}All timezones saved!${consoleColors.white}`);
+        return true;
     } catch (err) {
         console.log(`${consoleColors.red}An error occured in loadTimeZones: ${err}${consoleColors.white}`);
+        return false;
     }
-
 }
 
-module.exports.loadCountries = loadCountries;
-module.exports.loadTimeZones = loadTimeZones;
-module.exports.createAdresses = createAdresses;
 module.exports.createFakeData = createFakeData;
-module.exports.loadCities = loadCities;
+
 
 

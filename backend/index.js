@@ -28,11 +28,7 @@ function startWebServer() {
     app.listen(port, () => console.log(`${consoleColors.green}Listening on port: ${port}${consoleColors.white}`));
 
     let dataFactory = require('./dataFactory.js');
-    // dataFactory.loadTimeZones();
-    //dataFactory.loadCountries();
-    //dataFactory.createAdresses();
-    //dataFactory.createFakeData();
-    dataFactory.loadCities();
+    dataFactory.createFakeData();
 }
 
 require('./entities/Person');
