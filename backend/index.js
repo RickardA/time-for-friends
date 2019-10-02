@@ -32,6 +32,7 @@ function startWebServer() {
     //dataFactory.loadCountries();
     //dataFactory.createAdresses();
     //dataFactory.createFakeData();
+    dataFactory.loadCities();
 }
 
 require('./entities/Person');

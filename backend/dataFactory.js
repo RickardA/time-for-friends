@@ -1,5 +1,6 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
+const fetch = require('node-fetch');
 
 let consoleColors = {
     red: "\u001b[1;31m",
@@ -41,6 +42,79 @@ function loadCountries() {
 
 }
 
+async function loadCities() {
+    let loadedCities = [{}];
+    try {
+        let input = fs.createReadStream('./data/cities.txt');
+
+        let readLine = require('readline').createInterface({
+            input: input,
+            terminal: false
+        });
+
+        console.log(`${consoleColors.yellow}Loading cities from file${consoleColors.white}`);
+        for await (const cityName of readLine) {
+            let suggestions = await getCity(cityName);
+            if (suggestions) {
+                const rightSuggestion = suggestions.filter((suggestion) => {
+                    return suggestion.matchLevel.toLowerCase() === 'city'
+                })
+                if (rightSuggestion && rightSuggestion[0]) {
+                    let position = await getLocation(rightSuggestion[0].locationId);
+                    loadedCities.push({
+                        city: rightSuggestion[0].address.city,
+                        country: rightSuggestion[0].country,
+                        locationId: rightSuggestion[0].locationId,
+                        lat: position ? position.Latitude : 0,
+                        long: position ? position.Longitude : 0
+                    })
+                }
+            }
+        }
+        console.log(`${consoleColors.green}${loadedCities.length} cities was loaded!${consoleColors.white}`);
+        return loadedCities;
+    } catch (err) {
+        console.log(`${consoleColors.red}An error occured in loadCities: ${err}${consoleColors.white}`);
+        return null;
+    }
+
+}
+
+async function getCity(cityName) {
+    try {
+        //console.log(`${consoleColors.yellow}Getting city information for: ${cityName}${consoleColors.white}`);
+        let result = await fetch(`http://autocomplete.geocoder.api.here.com/6.2/suggest.json?app_id=RaCeBN6d2qKOWzRWcBZu&app_code=_BOiSdF63exs1SfJ1tqmYg&language=en&query=${cityName}`, {
+            method: 'GET',
+        })
+        result = await result.json();
+        if (result && result.suggestions) {
+            console.log(`${consoleColors.green}Got city information for: ${cityName}${consoleColors.white}`);
+            return result.suggestions;
+        }
+    } catch (err) {
+        console.log(`${consoleColors.red}Error getting city information for: ${cityName}${consoleColors.white}`);
+    }
+    return null;
+}
+
+async function getLocation(locationId) {
+    try {
+        //console.log(`${consoleColors.yellow}Getting location for locationId:${locationId}${consoleColors.white}`);
+        let result = await fetch(`http://geocoder.api.here.com/6.2/geocode.json?locationid=${locationId}&app_id=RaCeBN6d2qKOWzRWcBZu&app_code=_BOiSdF63exs1SfJ1tqmYg&gen=8`, {
+            method: 'GET',
+        })
+        result = await result.json();
+        if (result) {
+            console.log(`${consoleColors.green}Got location for locationId:${locationId}${consoleColors.white}`);
+            return result.Response.View[0].Result[0].Location.DisplayPosition;
+        }
+    }
+    catch (err) {
+        console.log(`${consoleColors.red}Error getting location for locationId:${locationId}${consoleColors.white}`);
+    }
+    return null;
+}
+
 async function createAdresses() {
     let Address = require('./entities/Address');
     let addressAttributes = ['cities', 'countries']
@@ -73,9 +147,9 @@ async function createAdresses() {
             });
             console.log(`${consoleColors.green}All ${attribute} loaded!${consoleColors.white}`);
         }
-            console.log(`${consoleColors.green}All addressAttributes loaded!${consoleColors.white}`);
+        console.log(`${consoleColors.green}All addressAttributes loaded!${consoleColors.white}`);
 
-        for(let i = 0;i < 30; i++){
+        for (let i = 0; i < 30; i++) {
             let tempAddress = new Address({
                 city: attributeValues.cities[Math.floor(Math.random() * attributeValues.cities.length)],
                 country: attributeValues.countries[Math.floor(Math.random() * attributeValues.countries.length)]
@@ -177,5 +251,6 @@ module.exports.loadCountries = loadCountries;
 module.exports.loadTimeZones = loadTimeZones;
 module.exports.createAdresses = createAdresses;
 module.exports.createFakeData = createFakeData;
+module.exports.loadCities = loadCities;
 
 
