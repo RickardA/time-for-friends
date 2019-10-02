@@ -1,15 +1,10 @@
 Frontend:
-- Fixa H1 i jumbotron []
 - Live validering av "add friend" formulär []
-- Fixa en snygg startsida []
 - Fixa felhantering ifall databasen ligger nere []
 - Fixa så url ändras vid sökning mm och kontrollera vid refresh och ladda in det som behövs []
 - Stor karta med alla vänner []
 - Snygga till design, testa olika webbläsare []
 - Refactoring []
-
-Backend:
-- Fixa mocdata scriptet []
 
 Extra:
 - Lägg till automatisk width igenkänning till autocomplete []
