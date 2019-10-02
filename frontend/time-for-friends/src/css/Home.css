@@ -1,0 +1,51 @@
+
+@media only screen and (max-width: 767px) {   
+    .jumbo{
+        background-size: 120vw auto !important;
+    }
+
+    .jumboH1{
+        font-size: 2.0rem !important;
+    }
+    
+    .jumboP{
+        font-size:1rem !important;
+    }
+
+    .h1{
+        font-size: 1.5rem !important;
+    }
+
+    .icon{
+        font-size: 4rem !important;
+        color: white;
+    }
+  }
+
+
+
+.jumbo{
+    background-image: url('../resources/jumbotronImg.jpg');
+    background-size: 100vw auto;
+    background-repeat: no-repeat;
+    background-position: 0% 80%;
+    border-radius: 0 !important;
+}
+
+.jumboTxt{
+    color: white;
+    text-shadow: black 1px 1px 11px;
+}
+
+
+.jumboH1{
+    font-size: 2.5rem;
+}
+
+.jumboP{
+    font-size:1.1rem;
+}
+
+.h1{
+    font-size: 1.8rem !important;
+}

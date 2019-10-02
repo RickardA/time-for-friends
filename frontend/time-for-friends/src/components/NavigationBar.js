@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Collapse, Navbar, NavbarBrand, NavbarToggler, Nav, NavItem } from 'reactstrap';
+import { Collapse, Navbar,NavbarToggler, Nav, NavItem } from 'reactstrap';
 import { Link } from "react-router-dom";
 
 export default class NavigationBar extends Component {
@@ -51,7 +51,7 @@ export default class NavigationBar extends Component {
     return (
       <div>
         <Navbar color="dark" className="navbar" light expand="md">
-          <Link to={this.state.links.home.to} className="text-white" style={{ textDecoration: 'none', fontSize: '20px' }}>{this.state.title}</Link>
+          <Link to={this.state.links.home.to} style={{ textDecoration: 'none', fontSize: '20px',color:'white' }}>{this.state.title}</Link>
           <NavbarToggler style={{ backgroundColor: 'white' }} onClick={this.toggleNavbar.bind(this)} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>

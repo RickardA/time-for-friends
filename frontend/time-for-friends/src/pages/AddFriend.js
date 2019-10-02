@@ -219,7 +219,7 @@ class AddFriend extends Component {
                                 {this.props.store.timezones.map(obj => <option key={obj._id} value={obj._id}>{obj.offset}</option>)}
                             </Input>
                         </FormGroup>
-                        <Button type="submit">Submit</Button>
+                        <Button color="primary" type="submit">Submit</Button>
                     </Form>
                     <Modal isOpen={this.state.modalToggle} >
                         <ModalHeader>Ooops...</ModalHeader>
