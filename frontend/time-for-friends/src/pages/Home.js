@@ -8,9 +8,9 @@ export default class Home extends Component {
 
   render() {
     return (
-      <div className="d-flex flex-column" style={{backgroundColor: '#333'}}>
+      <div className="d-flex flex-column flex-grow-1" style={{backgroundColor: '#333'}}>
         <Jumbotron
-          className="pt-1 pb-1 pt-md-5 pb-md-5 mb-0 jumbo flex-grow-1">
+          className="pt-1 pb-1 pt-md-5 pb-md-5 mb-0 jumbo">
           <h1 className="jumboH1 jumboTxt">It's time for friends!</h1>
           <p className="lead jumboP jumboTxt">This is a simple website to keep track on your friends,but not in a creepy way.</p>
           <p className="lead jumboP jumboTxt">It uses smart functions to keep track on the time at your friends location.</p>

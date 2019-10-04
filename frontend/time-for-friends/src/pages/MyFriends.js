@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Spinner } from 'reactstrap';
+import { Container, Row, Col} from 'reactstrap';
 import FriendCard from '../components/FriendCard';
 import SearchBar from '../components/SearchBar';
 import { inject, observer } from 'mobx-react';
@@ -28,7 +28,7 @@ class MyFriends extends Component {
         }
 
         return (
-            <Container>
+            <Container className="mb-4 ">
                 <Row >
                     <Col sm="12" className="mt-5">
                         <SearchBar />
