@@ -6,6 +6,7 @@ import MyFriends from './pages/MyFriends';
 import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import Page404 from './pages/Page404';
+import FriendMap from './pages/FriendMap';
 import { BrowserRouter as Router, Route} from "react-router-dom";
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
@@ -26,6 +27,7 @@ export default class App extends Component {
             <Route exact path="/" component={Home} />
             <Route exact path="/addFriend" component={AddFriend} />
             <Route exact path="/myFriends" component={MyFriends} />
+            <Route exact path="/friendMap" component={FriendMap} />
         </div>
         <Footer /> 
       </Router>

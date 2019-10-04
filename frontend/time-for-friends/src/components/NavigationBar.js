@@ -20,6 +20,10 @@ export default class NavigationBar extends Component {
       myFriends: {
         to: '/myFriends',
         text: 'My Friends'
+      },
+      friendMap: {
+        to: '/friendMap',
+        text: 'Friend Map'
       }
     }
   };

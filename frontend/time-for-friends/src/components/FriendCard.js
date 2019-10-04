@@ -10,7 +10,12 @@ export default class FriendCard extends Component {
     render() {
         return ( 
             <Card style={{margin: '20px 0 0 0'}}>
-                <Map mapId={this.props.person._id} height="150px" lat={this.props.person.address.lat} long={this.props.person.address.long} zoom="11"/>
+                <Map 
+                mapId={this.props.person._id} 
+                height="150px" 
+                center={{lat:this.props.person.address.lat,lng:this.props.person.address.long}} 
+                persons={this.props.person} 
+                zoom="11"/>
                 <CardBody>
                     <p><FontAwesomeIcon icon='signature' /> {this.props.person.firstName} {this.props.person.lastName}</p>
                     <p><FontAwesomeIcon icon='phone' /> {this.props.person.phoneNumber}</p>

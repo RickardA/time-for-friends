@@ -7,14 +7,15 @@ export default class Map extends Component {
         app_id: 'RaCeBN6d2qKOWzRWcBZu',
         app_code: '_BOiSdF63exs1SfJ1tqmYg',
         center: {
-            lat: this.props.lat,
-            lng: this.props.long,
+            lat: this.props.center.lat,
+            lng: this.props.center.lng,
         },
         zoom: this.props.zoom,
         error: false,
     }
 
     componentDidMount() {
+        
         if (this.state.center.lng !== null && this.state.center.lat !== null && typeof this.state.center.lng !== 'undefined' && typeof this.state.center.lat !== 'undefined') {
             try {
                 let platform = new window.H.service.Platform(this.state);
@@ -29,13 +30,31 @@ export default class Map extends Component {
                     zoom: this.state.zoom
                 }
                 );
+                
+                if(this.props.persons && Array.isArray(this.props.persons)){
+                    for(let person of this.props.persons){
+                        console.log("marker")
+                        let markCoords = {
+                            lat: person.address.lat,
+                            lng: person.address.long
+                        }
+                        let marker = new window.H.map.Marker(markCoords);
+    
+                        map.addObject(marker);
+                    }
+                }else if (this.props.persons) {
+                    let markCoords = {
+                        lat: this.props.persons.address.lat,
+                        lng: this.props.persons.address.long
+                    }
+                    let marker = new window.H.map.Marker(markCoords);
 
-                let marker = new window.H.map.Marker(this.state.center)
-
-                map.addObject(marker)
+                    map.addObject(marker);
+                }
                 this.setErrorState(false);
             } catch (err) {
                 this.setErrorState(true);
+                console.log(err)
             }
         } else {
             this.setErrorState(true);
