@@ -5,24 +5,42 @@ import Timezone from '../entities/Timezone';
 export default class Store{
 
     //Variables
-    @observable timezones = null;
-    @observable persons = null;
+    @observable timezones = {
+        data: null,
+        status: 'noData'
+    }
+    @observable persons = {
+        data:null,
+        status:'noData'
+    };
     
     //----------::----------//
     
     //Actions
     @action
     async getPersons(query,sort){
+        this.persons = {data:null,status:'loading'}
         sort = !sort ? {firstName:1} : sort;
         let person = new Person();
-        this.persons = await person.find(query, sort);
+        let result = await person.find(query, sort,3);
+        if (result) {
+            this.persons = {data:result,status:'done'}
+        }else{
+            this.persons = {data:null,status:'noData'}
+        }
     }
 
     @action
     async getTimezones(){
-        if (!this.timezones) {
+        if (!this.timezones.data) {
+            this.timezones = {data:null,status:'loading'};
             let timezone = new Timezone();
-            this.timezones = await timezone.find();
+            let result = await timezone.find({},{},3);
+            if (result) {
+                this.timezones = {data:result,status:'done'};
+            }else{
+                this.timezones = {data:null,status:'noData'};
+            }
         }
     }
 
