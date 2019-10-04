@@ -49,3 +49,9 @@
 .h1{
     font-size: 1.8rem !important;
 }
+
+#root{
+    height:100vh;
+    display: flex;
+    flex-direction: column;
+}

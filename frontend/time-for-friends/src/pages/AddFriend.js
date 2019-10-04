@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Person from '../entities/Person'
 import Address from '../entities/Address'
-import { Button, Form, FormGroup, Label, Input, Spinner, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input,Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { inject, observer } from 'mobx-react';
 import AutoComplete from '../components/AutoComplete';
 import AutoCompleteGroup from '../components/AutoCompleteGroup';
+import Error from '../components/Error';
+import Loading from '../components/Loading';
 
 @inject('store')
 @observer
@@ -135,7 +137,7 @@ class AddFriend extends Component {
 
 
     render() {
-        if (this.props.store.timezones) {
+        if (this.props.store.timezones.status === 'done') {
             return (
                 <div style={{ padding: '20px 20vw 20px 20vw' }}>
                     <h1>Add Friend</h1>
@@ -171,7 +173,7 @@ class AddFriend extends Component {
                                 onChange={this.handleInputChange.bind(this)}
                                 invalid={this.state.formError.phoneNumberError}
                                 id="phoneNumber"
-                                placeholder="e.g. +467612345678" />
+                                placeholder="e.g. +46734679584" />
                         </FormGroup>
                         <FormGroup>
                             <Label for="email">Email</Label>
@@ -216,7 +218,7 @@ class AddFriend extends Component {
                                 multiple={false}
                             >
                                 <option value="">Choose a timezone</option>
-                                {this.props.store.timezones.map(obj => <option key={obj._id} value={obj._id}>{obj.offset}</option>)}
+                                {this.props.store.timezones.data.map(obj => <option key={obj._id} value={obj._id}>{obj.offset}</option>)}
                             </Input>
                         </FormGroup>
                         <Button color="primary" type="submit">Submit</Button>
@@ -232,8 +234,10 @@ class AddFriend extends Component {
                     </Modal>
                 </div>
             );
-        } else {
-            return (<Spinner color="primary" style={{ width: '3rem', height: '3rem' }} />);
+        } else if(this.props.store.timezones.status === 'loading') {
+            return (<Loading />);
+        }else{
+            return(<Error title="Oops... Something went wrong" description="It seems like we couldn't load the resources needed, please try again!" />)
         }
     }
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './App.css';
+import './css/App.css';
 import Home from './pages/Home';
 import AddFriend from './pages/AddFriend';
 import MyFriends from './pages/MyFriends';
@@ -20,7 +20,7 @@ export default class App extends Component {
     return (
       <Router>
         <NavigationBar />
-        <div className="app">
+        <div className="app d-flex flex-column flex-grow-1">
             <Route exact path="/" component={Home} />
             <Route exact path="/addFriend" component={AddFriend} />
             <Route exact path="/myFriends" component={MyFriends} />

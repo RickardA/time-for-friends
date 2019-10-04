@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { FormGroup, Label, Input, ButtonGroup, Button, InputGroup, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { inject, observer } from 'mobx-react';
+import Loading from './Loading';
+import Error from './Error';
 
 @inject('store')
 @observer
@@ -75,7 +77,7 @@ class SearchBar extends Component {
     }
 
     render() {
-        if (this.props.store.timezones) {
+        if (this.props.store.timezones.status === 'done') {
             return (
                 <div className="d-flex flex-column pl-2 pr-2 pl-lg-5 pr-lg-5" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
                     <div className="d-flex flex-grow-1">
@@ -128,7 +130,7 @@ class SearchBar extends Component {
                                 multiple={false}
                             >
                                 <option value="">Show all timezones</option>
-                                {this.props.store.timezones.map(obj => <option key={obj._id} value={obj.offset}>{obj.offset}</option>)}
+                                {this.props.store.timezones.data.map(obj => <option key={obj._id} value={obj.offset}>{obj.offset}</option>)}
                             </Input>
                         </div>
                         <div className="d-flex align-items-baseline justify-content-center flex-grow-1 ml-lg-2 mr-lg-2 mt-3 mt-lg-0">
@@ -169,10 +171,12 @@ class SearchBar extends Component {
                     </div>
                 </div>
             );
-        } else {
+        } else if(this.props.store.timezones.status === 'loading'){
             return (
-                <h1>Loading</h1>
+                <Loading />
             );
+        }else{
+            return(<Error title="Something went wrong.." description="Couldn't load searchbar" />)
         }
     }
 }

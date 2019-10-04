@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Jumbotron, Button, Card,CardText, Container, Row, Col } from 'reactstrap';
 import { Link } from "react-router-dom";
-import '../css/Home.css';
+import '../css/App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default class Home extends Component {
