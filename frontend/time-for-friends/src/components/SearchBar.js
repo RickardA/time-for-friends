@@ -79,7 +79,7 @@ class SearchBar extends Component {
     render() {
         if (this.props.store.timezones.status === 'done') {
             return (
-                <div className="d-flex flex-column pl-2 pr-2 pl-lg-5 pr-lg-5" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
+                <div className="d-flex flex-column pl-1 pr-1" style={{ borderStyle: 'solid', borderWidth: '1px', borderColor: 'grey', borderRadius: '10px' }}>
                     <div className="d-flex flex-grow-1">
                         <h4>Search</h4>
                     </div>
