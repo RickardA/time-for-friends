@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
+import {Container} from 'reactstrap';
 import Map from '../components/Map';
 import SearchBar from '../components/SearchBar';
 import Loading from '../components/Loading';
@@ -32,13 +33,13 @@ class FriendMap extends Component {
         }
 
         return (
-            <div className="ml-md-5 mr-md-5 mb-4 mr-1 ml-1">
+            <Container className="mb-4">
                 <div className="mt-4 mb-4">
                     <SearchBar />
                 </div>
 
                 {map}
-            </div>
+            </Container>
         );
     }
 }
