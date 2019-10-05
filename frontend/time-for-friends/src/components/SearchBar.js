@@ -84,7 +84,7 @@ class SearchBar extends Component {
                         <h4>Search</h4>
                     </div>
                     <div className="d-flex flex-column flex-lg-row">
-                        <div className="d-flex flex-grow-1 h-100">
+                        <div className="d-flex flex-grow-1" style={{ height: '50%' }}>
                             <InputGroup >
                                 <Input
                                     type="text"
@@ -156,27 +156,42 @@ class SearchBar extends Component {
                                 />
                             </FormGroup>
                         </div>
-                        <Button className="mb-2 h-100" color="danger" onClick={this.resetSearchForm.bind(this)}>Reset search</Button>
+                        <Button className="mb-2" style={{ height: '40px' }} color="danger" onClick={this.resetSearchForm.bind(this)}>Reset search</Button>
                         <DropdownItem divider />
                     </div>
                     <div className="d-flex mb-2 flex-column align-items-center">
                         <Label style={{ textDecoration: 'underline' }}>Order By</Label>
                         <div className="d-flex justify-content-center">
                             <ButtonGroup>
-                                <Button color="primary" name="sortByVal" value="firstName" onClick={this.performSearch.bind(this)} active={this.state.sortByVal === 'firstName'}>First Name</Button>
-                                <Button color="primary" name="sortByVal" value="lastName" onClick={this.performSearch.bind(this)} active={this.state.sortByVal === 'lastName'}>Last Name</Button>
-                                <Button color="primary" name="sortByVal" value="timezone" onClick={this.performSearch.bind(this)} active={this.state.sortByVal === 'timezone'}>Timezone</Button>
+                                <Button
+                                    color="primary"
+                                    name="sortByVal"
+                                    value="firstName"
+                                    onClick={this.performSearch.bind(this)}
+                                    active={this.state.sortByVal === 'firstName'}>First Name</Button>
+                                <Button
+                                    color="primary"
+                                    name="sortByVal"
+                                    value="lastName"
+                                    onClick={this.performSearch.bind(this)}
+                                    active={this.state.sortByVal === 'lastName'}>Last Name</Button>
+                                <Button
+                                    color="primary"
+                                    name="sortByVal"
+                                    value="timezone"
+                                    onClick={this.performSearch.bind(this)}
+                                    active={this.state.sortByVal === 'timezone'}>Timezone</Button>
                             </ButtonGroup>
                         </div>
                     </div>
                 </div>
             );
-        } else if(this.props.store.timezones.status === 'loading'){
+        } else if (this.props.store.timezones.status === 'loading') {
             return (
                 <Loading />
             );
-        }else{
-            return(<Error title="Something went wrong.." description="Couldn't load searchbar" />)
+        } else {
+            return (<Error title="Something went wrong.." description="Couldn't load searchbar" />)
         }
     }
 }
