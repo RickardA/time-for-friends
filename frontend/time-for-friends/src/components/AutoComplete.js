@@ -16,13 +16,8 @@ class AutoComplete extends Component {
     }
 
     componentDidMount() {
-        const DOMNode = ReactDOM.findDOMNode(this.refs.inputField)
-        this.setState((prevState) => {
-            return {
-                ...prevState,
-                width: DOMNode.clientWidth
-            }
-        });
+        this.updateListSize();
+        window.addEventListener('resize',this.updateListSize.bind(this),false);
         document.addEventListener('click', this.clickListener.bind(this), false);
         document.addEventListener('keydown', this.clickListener.bind(this), false);
     }
@@ -30,6 +25,17 @@ class AutoComplete extends Component {
     componentWillUnmount() {
         document.removeEventListener('click', this.clickListener.bind(this), false);
         document.removeEventListener('keydown', this.clickListener.bind(this), false);
+        window.removeEventListener('resize',this.updateListSize.bind(this),false);
+    }
+
+    updateListSize(){
+        const DOMNode = ReactDOM.findDOMNode(this.refs.inputField)
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                width: DOMNode.clientWidth
+            }
+        });
     }
 
     firstUpper(text) {
