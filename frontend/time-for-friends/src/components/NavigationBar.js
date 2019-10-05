@@ -54,7 +54,7 @@ export default class NavigationBar extends Component {
   render() {
     return (
       <div>
-        <Navbar fixed="top" color="dark" className="navbar" light expand="md" style={{height:'55px'}}>
+        <Navbar fixed="top" color="dark" className="navbar p-md-3" light expand="md">
           <Link to={this.state.links.home.to} style={{ textDecoration: 'none', fontSize: '20px',color:'white' }}>{this.state.title}</Link>
           <NavbarToggler style={{ backgroundColor: 'white' }} onClick={this.toggleNavbar.bind(this)} />
           <Collapse isOpen={this.state.isOpen} navbar>
