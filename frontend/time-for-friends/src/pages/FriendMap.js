@@ -18,6 +18,7 @@ class FriendMap extends Component {
                     height="100vh"
                     center={{ lat: 50, lng: 50 }}
                     persons={this.props.store.persons.data}
+                    infoBubble="true"
                     zoom="3" />
             );
         }else{
