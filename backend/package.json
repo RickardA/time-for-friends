@@ -18,7 +18,7 @@
   "homepage": "https://github.com/RickardA/time-for-friends#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "moment-timezone": "^0.5.26",
+    "moment-timezone": "^0.5.35",
     "mongoose": "^5.7.0",
     "node-fetch": "^2.6.0",
     "nodemon": "^1.19.2"
